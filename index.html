@@ -61,17 +61,17 @@
 
   /* ---------- shared shell pieces ---------- */
   .topbar{
-    flex:0 0 80px; background:#fff; border-radius:0 0 40px 40px; box-shadow: var(--bayang-kecil);
-    display:flex; align-items:center; justify-content:space-between; padding:0 28px; z-index:5;
+    flex:0 0 42px; background:#fff; border-radius:0 0 22px 22px; box-shadow: var(--bayang-kecil);
+    display:flex; align-items:center; justify-content:space-between; padding:0 20px; z-index:5;
   }
   .navbar{
-    flex:0 0 90px; background:#fff; border-radius:40px 40px 0 0; box-shadow: 0 -6px 16px rgba(18,25,46,0.08);
-    display:flex; align-items:center; justify-content:space-between; padding:0 28px; z-index:5;
+    flex:0 0 46px; background:#fff; border-radius:22px 22px 0 0; box-shadow: 0 -6px 16px rgba(18,25,46,0.08);
+    display:flex; align-items:center; justify-content:space-between; padding:0 20px; z-index:5;
   }
   .content{ flex:1; overflow:hidden; position:relative; }
 
-  .brand{ display:flex; align-items:center; gap:10px; font-family:'Baloo 2'; font-weight:700; color:var(--primary-dark); font-size:20px;}
-  .brand .dot{width:10px;height:10px;border-radius:50%; background:var(--accent); box-shadow:0 0 0 4px rgba(242,153,74,0.18);}
+  .brand{ display:flex; align-items:center; gap:8px; font-family:'Baloo 2'; font-weight:700; color:var(--primary-dark); font-size:17px;}
+  .brand .dot{width:8px;height:8px;border-radius:50%; background:var(--accent); box-shadow:0 0 0 3px rgba(242,153,74,0.18);}
 
   .btn{
     border:none; cursor:pointer; font-family:'Plus Jakarta Sans'; font-weight:700;
@@ -86,7 +86,7 @@
   .btn-primary:hover{ background:var(--primary-dark); }
   .btn-ghost{ background:#fff; color:var(--ink); border:1.5px solid var(--garis); box-shadow:none; }
   .btn-ghost:hover{ border-color:var(--primary); color:var(--primary-dark); }
-  .btn-sm{ min-width:0; padding:10px 18px; min-height:44px; font-size:13px; }
+  .btn-sm{ min-width:0; padding:6px 16px; min-height:30px; font-size:13px; }
 
   /* ---------- SCREEN: Judul ---------- */
   #screen-judul .content{
@@ -142,15 +142,15 @@
   .user-badge{ font-size:12px; font-weight:700; color:var(--primary-dark); background:var(--cream); padding:6px 14px; border-radius:99px; }
 
   /* ---------- Engine panels (shared oleh Eksplorasi & Terpandu) ---------- */
-  .engine-grid{ display:grid; grid-template-columns: 230px 1fr 300px; gap:18px; padding:18px 24px; height:100%; }
-  .panel{ background:var(--panel); border-radius:18px; box-shadow:var(--bayang-kecil); padding:16px; overflow:auto; }
-  .panel h3{ font-family:'Baloo 2'; font-size:14px; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-soft); margin:0 0 14px; }
+  .engine-grid{ display:grid; grid-template-columns: 300px 1fr 280px; gap:9px; padding:9px 12px; height:100%; }
+  .panel{ background:var(--panel); border-radius:16px; box-shadow:var(--bayang-kecil); padding:12px; overflow:auto; }
+  .panel h3{ font-family:'Baloo 2'; font-size:15px; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-soft); margin:0 0 12px; }
 
   .ctrl-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; padding:12px; border-radius:14px; background:var(--cream); }
   .ctrl-row.locked{ opacity:0.55; }
   .ctrl-label{ display:flex; flex-direction:column; gap:2px; }
-  .ctrl-label .name{ font-weight:700; font-size:13px; }
-  .ctrl-label .count{ font-family:'JetBrains Mono'; font-size:20px; font-weight:600; }
+  .ctrl-label .name{ font-weight:700; font-size:15px; }
+  .ctrl-label .count{ font-family:'JetBrains Mono'; font-size:24px; font-weight:600; }
   .ctrl-row.proton .count{ color:var(--accent-dark); }
   .ctrl-row.neutron .count{ color:var(--neutron-c); }
   .ctrl-row.elektron .count{ color:var(--primary); }
@@ -163,9 +163,9 @@
   .step-btn:disabled{ opacity:0.3; cursor:not-allowed; }
 
   .toggle-list{ margin-top:8px; display:flex; flex-direction:column; gap:10px; }
-  .toggle-row{ display:flex; align-items:center; gap:9px; font-size:13px; color:var(--ink-soft); }
+  .toggle-row{ display:flex; align-items:center; gap:9px; font-size:15px; color:var(--ink-soft); }
   .toggle-row input{ accent-color:var(--primary); width:16px; height:16px; }
-  .hint-box{ margin-top:16px; font-size:12.5px; color:var(--ink-soft); background:var(--cream); border-radius:12px; padding:10px 12px; line-height:1.5; }
+  .hint-box{ margin-top:14px; font-size:14px; color:var(--ink-soft); background:var(--cream); border-radius:12px; padding:10px 12px; line-height:1.55; }
 
   .panel-visual{ display:flex; align-items:center; justify-content:center; position:relative; }
   .atom-stage{ position:relative; width:400px; height:400px; }
@@ -180,15 +180,15 @@
   .particle.proton{ background: radial-gradient(circle at 35% 30%, #FFE3C2, var(--accent) 55%, var(--accent-dark)); }
   .particle.neutron{ background: radial-gradient(circle at 35% 30%, #EDEFF6, var(--neutron-c) 60%, #5C6785); }
 
-  .notasi-float{ position:absolute; bottom:6px; left:50%; transform:translateX(-50%); text-align:center; }
+  .notasi-float{ position:absolute; top:10px; right:10px; text-align:right; }
   .notasi-lengkap{ font-family:'JetBrains Mono'; font-size:28px; font-weight:600; color:var(--ink); }
   .notasi-lengkap sup, .notasi-lengkap sub{ font-size:14px; }
   .notasi-singkat{ font-family:'Baloo 2'; font-weight:700; font-size:14px; color:var(--ink-soft); margin-top:2px; }
 
   .info-row{ display:flex; align-items:baseline; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--garis); }
   .info-row:last-of-type{ border-bottom:none; }
-  .info-row .k{ font-size:12.5px; color:var(--ink-soft); font-weight:600; }
-  .info-row .v{ font-family:'JetBrains Mono'; font-size:15px; font-weight:600; color:var(--ink); }
+  .info-row .k{ font-size:14px; color:var(--ink-soft); font-weight:600; }
+  .info-row .v{ font-family:'JetBrains Mono'; font-size:16.5px; font-weight:600; color:var(--ink); }
 
   .conclusion{ margin-top:16px; padding:14px 16px; border-radius:14px; background: linear-gradient(135deg, rgba(27,111,168,0.08), rgba(76,201,240,0.10)); border:1px solid rgba(27,111,168,0.18); }
   .conclusion.ion{ background: linear-gradient(135deg, rgba(242,153,74,0.10), rgba(217,121,31,0.10)); border-color:rgba(217,121,31,0.25); }
@@ -200,6 +200,16 @@
   .badge-stabil.ya{ background:rgba(42,174,108,0.14); color:var(--hijau); }
   .badge-stabil.tidak{ background:rgba(225,91,79,0.14); color:var(--merah); }
   .badge-stabil.hipotetis{ background:rgba(90,100,120,0.12); color:var(--ink-soft); }
+
+  /* ---------- Pengingat rotasi (khusus HP mode potret) ---------- */
+  #rotate-hint{
+    position:fixed; inset:0; z-index:999; display:none; align-items:center; justify-content:center;
+    flex-direction:column; gap:16px; background:#0B1729; color:#fff; text-align:center; padding:32px;
+  }
+  #rotate-hint.show{ display:flex; }
+  #rotate-hint .icon{ font-size:48px; animation: rotateHintSpin 1.8s ease-in-out infinite; }
+  @keyframes rotateHintSpin{ 0%,100%{ transform:rotate(0deg);} 50%{ transform:rotate(90deg);} }
+  #rotate-hint p{ font-family:'Plus Jakarta Sans'; font-size:15px; max-width:280px; line-height:1.5; opacity:0.85; margin:0; }
 
   /* ---------- SCREEN: Terpandu (khusus) ---------- */
   .progress-dots{ display:flex; gap:7px; }
@@ -232,6 +242,8 @@
 </style>
 </head>
 <body>
+
+<div id="rotate-hint"><div class="icon">📱</div><p>Putar perangkatmu ke <strong>mode mendatar (landscape)</strong> supaya tampilan &amp; tulisan lebih besar dan nyaman dibaca.</p></div>
 
 <div id="viewport">
   <div id="stage">
@@ -495,8 +507,13 @@ function resizeStage(){
   stage.style.transform = 'scale(' + scale + ')';
   stage.style.left = ((w - 1280*scale)/2) + 'px';
   stage.style.top  = ((h - 720*scale)/2) + 'px';
+
+  // Pengingat rotasi: layar sempit & lebih tinggi dari lebar (potret) -> panggung 16:9 jadi sangat kecil
+  const isNarrowPortrait = w < 820 && h > w;
+  document.getElementById('rotate-hint').classList.toggle('show', isNarrowPortrait);
 }
 window.addEventListener('resize', resizeStage);
+window.addEventListener('orientationchange', resizeStage);
 resizeStage();
 
 /* ============ 2. SCREEN NAVIGATION ============ */
@@ -1363,11 +1380,24 @@ const SUP = {0:"⁰",1:"¹",2:"²",3:"³",4:"⁴",5:"⁵",6:"⁶",7:"⁷",8:"⁸
 const SUB = {0:"₀",1:"₁",2:"₂",3:"₃",4:"₄",5:"₅",6:"₆",7:"₇",8:"₈",9:"₉"};
 function toSup(n){ return String(n).split('').map(c => SUP[c] ?? c).join(''); }
 function toSub(n){ return String(n).split('').map(c => SUB[c] ?? c).join(''); }
-function shellCapacities(){ return [2,8,18,32]; }
-function distributeElectrons(n){
-  const caps = shellCapacities(); const shells = []; let left = n;
-  for(const cap of caps){ if(left<=0) break; const take = Math.min(cap, left); shells.push(take); left -= take; }
-  if(left>0 && shells.length) shells[shells.length-1] += left;
+// Urutan pengisian elektron sesungguhnya (Aufbau), dikelompokkan per kulit (nomor kuantum utama n).
+// Menghasilkan pola standar kimia SMA: ...Kr=2,8,18,8 | Rb=2,8,18,8,1 | Y=2,8,18,9,2 | ... | Pd=2,8,18,18,2
+const AUFBAU_ORDER = [
+  [1,2],[2,2],[2,6],[3,2],[3,6],[4,2],[3,10],[4,6],[5,2],[4,10],[5,6],
+  [6,2],[4,14],[5,10],[6,6],[7,2],[5,14],[6,10],[7,6]
+];
+function distributeElectrons(total){
+  const perKulit = {};
+  let sisa = total;
+  for(const [n, kapasitas] of AUFBAU_ORDER){
+    if(sisa <= 0) break;
+    const ambil = Math.min(kapasitas, sisa);
+    perKulit[n] = (perKulit[n] || 0) + ambil;
+    sisa -= ambil;
+  }
+  const maxN = Math.max(1, ...Object.keys(perKulit).map(Number));
+  const shells = [];
+  for(let n=1; n<=maxN; n++) shells.push(perKulit[n] || 0);
   return shells;
 }
 function hashSeed(str){ let h=0; for(let i=0;i<str.length;i++){ h = (h*31 + str.charCodeAt(i)) >>> 0; } return h; }
@@ -1411,52 +1441,53 @@ function createAtomEngine(prefix, opts){
     const stageEl = el('atom-stage');
     stageEl.innerHTML = '';
     const showAtom = el('chk-atom') ? el('chk-atom').checked : true;
-    if(!showAtom) return;
     const cx = stageEl.offsetWidth/2 || 200, cy = stageEl.offsetHeight/2 || 200;
 
-    const A = entry.nomorMassa;
-    const nucR = 24 + Math.min(32, Math.sqrt(A) * 6.5);
-    const nucleus = document.createElement('div');
-    nucleus.className = 'nucleus';
-    nucleus.style.width = (nucR*2)+'px'; nucleus.style.height = (nucR*2)+'px';
-    nucleus.style.marginLeft = (-nucR)+'px'; nucleus.style.marginTop = (-nucR)+'px';
-    stageEl.appendChild(nucleus);
+    if(showAtom){
+      const A = entry.nomorMassa;
+      const nucR = 24 + Math.min(32, Math.sqrt(A) * 6.5);
+      const nucleus = document.createElement('div');
+      nucleus.className = 'nucleus';
+      nucleus.style.width = (nucR*2)+'px'; nucleus.style.height = (nucR*2)+'px';
+      nucleus.style.marginLeft = (-nucR)+'px'; nucleus.style.marginTop = (-nucR)+'px';
+      stageEl.appendChild(nucleus);
 
-    const rnd = seededRand(hashSeed(entry.id));
-    const types = [];
-    for(let i=0;i<entry.proton;i++) types.push('proton');
-    for(let i=0;i<entry.neutron;i++) types.push('neutron');
-    for(let i=types.length-1;i>0;i--){ const j = Math.floor(rnd()*(i+1)); [types[i],types[j]]=[types[j],types[i]]; }
-    const pSize = Math.max(7, 15 - types.length*0.22);
-    types.forEach((t, i) => {
-      const golden = 2.399963;
-      const r = nucR * 0.82 * Math.sqrt((i+0.5)/types.length);
-      const theta = i * golden;
-      const px = cx + r*Math.cos(theta), py = cy + r*Math.sin(theta);
-      const p = document.createElement('div');
-      p.className = 'particle ' + t;
-      p.style.width = pSize+'px'; p.style.height = pSize+'px';
-      p.style.left = (px - pSize/2)+'px'; p.style.top = (py - pSize/2)+'px';
-      stageEl.appendChild(p);
-    });
+      const rnd = seededRand(hashSeed(entry.id));
+      const types = [];
+      for(let i=0;i<entry.proton;i++) types.push('proton');
+      for(let i=0;i<entry.neutron;i++) types.push('neutron');
+      for(let i=types.length-1;i>0;i--){ const j = Math.floor(rnd()*(i+1)); [types[i],types[j]]=[types[j],types[i]]; }
+      const pSize = Math.max(7, 15 - types.length*0.22);
+      types.forEach((t, i) => {
+        const golden = 2.399963;
+        const r = nucR * 0.82 * Math.sqrt((i+0.5)/types.length);
+        const theta = i * golden;
+        const px = cx + r*Math.cos(theta), py = cy + r*Math.sin(theta);
+        const p = document.createElement('div');
+        p.className = 'particle ' + t;
+        p.style.width = pSize+'px'; p.style.height = pSize+'px';
+        p.style.left = (px - pSize/2)+'px'; p.style.top = (py - pSize/2)+'px';
+        stageEl.appendChild(p);
+      });
 
-    const shells = distributeElectrons(state.elektron);
-    shells.forEach((count, shellIdx) => {
-      const radius = nucR + 32 + shellIdx*40;
-      const ring = document.createElement('div');
-      ring.className = 'shell';
-      ring.style.width = (radius*2)+'px'; ring.style.height = (radius*2)+'px';
-      ring.style.marginLeft = (-radius)+'px'; ring.style.marginTop = (-radius)+'px';
-      ring.style.animation = `spin ${8 + shellIdx*4}s linear infinite ${shellIdx % 2 ? 'reverse' : ''}`;
-      for(let i=0;i<count;i++){
-        const angle = (360/count) * i;
-        const e = document.createElement('div');
-        e.className = 'electron';
-        e.style.transform = `rotate(${angle}deg) translate(${radius}px) rotate(-${angle}deg)`;
-        ring.appendChild(e);
-      }
-      stageEl.appendChild(ring);
-    });
+      const shells = distributeElectrons(state.elektron);
+      shells.forEach((count, shellIdx) => {
+        const radius = nucR + 32 + shellIdx*40;
+        const ring = document.createElement('div');
+        ring.className = 'shell';
+        ring.style.width = (radius*2)+'px'; ring.style.height = (radius*2)+'px';
+        ring.style.marginLeft = (-radius)+'px'; ring.style.marginTop = (-radius)+'px';
+        ring.style.animation = `spin ${8 + shellIdx*4}s linear infinite ${shellIdx % 2 ? 'reverse' : ''}`;
+        for(let i=0;i<count;i++){
+          const angle = (360/count) * i;
+          const e = document.createElement('div');
+          e.className = 'electron';
+          e.style.transform = `rotate(${angle}deg) translate(${radius}px) rotate(-${angle}deg)`;
+          ring.appendChild(e);
+        }
+        stageEl.appendChild(ring);
+      });
+    }
 
     const wrap = document.createElement('div');
     wrap.className = 'notasi-float';
