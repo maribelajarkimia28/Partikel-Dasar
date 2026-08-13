@@ -180,7 +180,7 @@
   .particle.proton{ background: radial-gradient(circle at 35% 30%, #FFE3C2, var(--accent) 55%, var(--accent-dark)); }
   .particle.neutron{ background: radial-gradient(circle at 35% 30%, #EDEFF6, var(--neutron-c) 60%, #5C6785); }
 
-  .notasi-float{ position:absolute; top:10px; right:10px; text-align:right; }
+  .notasi-float{ position:absolute; top:2px; left:2px; text-align:left; }
   .notasi-lengkap{ font-family:'JetBrains Mono'; font-size:28px; font-weight:600; color:var(--ink); }
   .notasi-lengkap sup, .notasi-lengkap sub{ font-size:14px; }
   .notasi-singkat{ font-family:'Baloo 2'; font-weight:700; font-size:14px; color:var(--ink-soft); margin-top:2px; }
@@ -210,6 +210,27 @@
   #rotate-hint .icon{ font-size:48px; animation: rotateHintSpin 1.8s ease-in-out infinite; }
   @keyframes rotateHintSpin{ 0%,100%{ transform:rotate(0deg);} 50%{ transform:rotate(90deg);} }
   #rotate-hint p{ font-family:'Plus Jakarta Sans'; font-size:15px; max-width:280px; line-height:1.5; opacity:0.85; margin:0; }
+
+  /* ---------- Kartu Soal (dipakai ulang di Eksplorasi & Terpandu — G.3) ---------- */
+  .quiz-card{ margin-top:14px; background:var(--cream); border-radius:14px; padding:14px; border:1px solid var(--garis); }
+  .quiz-card-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .quiz-score-badge{ font-family:'JetBrains Mono'; font-size:12.5px; font-weight:700; color:var(--primary-dark); background:#fff; padding:4px 11px; border-radius:99px; box-shadow:var(--bayang-kecil); }
+  .quiz-prompt{ font-size:14px; font-weight:700; color:var(--ink); margin-bottom:10px; line-height:1.4; }
+  .quiz-options{ display:flex; flex-direction:column; gap:8px; }
+  .quiz-opt-btn{
+    text-align:left; padding:10px 12px; border-radius:10px; border:1.5px solid var(--garis); background:#fff;
+    cursor:pointer; font-size:13.5px; font-family:'Plus Jakarta Sans'; transition:all .15s ease;
+  }
+  .quiz-opt-btn:hover:not(:disabled){ border-color:var(--primary); }
+  .quiz-opt-btn.correct{ background:rgba(42,174,108,0.14); border-color:var(--hijau); color:var(--hijau); font-weight:700; }
+  .quiz-opt-btn.wrong{ background:rgba(225,91,79,0.14); border-color:var(--merah); color:var(--merah); font-weight:700; }
+  .quiz-opt-btn:disabled{ cursor:default; }
+  .quiz-numeric{ display:flex; gap:8px; align-items:center; }
+  .quiz-numeric input{ width:90px; padding:10px; border-radius:10px; border:1.5px solid var(--garis); font-family:'JetBrains Mono'; font-size:16px; text-align:center; }
+  .quiz-feedback{ margin-top:10px; font-size:12.5px; font-weight:700; padding:9px 11px; border-radius:10px; display:none; line-height:1.4; }
+  .quiz-feedback.show{ display:block; }
+  .quiz-feedback.correct{ background:rgba(42,174,108,0.12); color:var(--hijau); }
+  .quiz-feedback.wrong{ background:rgba(225,91,79,0.12); color:var(--merah); }
 
   /* ---------- SCREEN: Terpandu (khusus) ---------- */
   .progress-dots{ display:flex; gap:7px; }
@@ -292,7 +313,7 @@
         </div>
       </div>
       <div class="content">
-        <div class="menu-card" onclick="showScreen('screen-eksplorasi'); eksplorasi.render();">
+        <div class="menu-card" onclick="openEksplorasi()">
           <div class="menu-icon">⚛️</div>
           <div class="menu-label">Eksplorasi<br>Bebas</div>
           <span class="menu-tag">Tahap 1</span>
@@ -347,6 +368,17 @@
             <div class="info-row"><span class="k">Kelimpahan alami</span><span class="v" id="eks-info-kelimpahan" style="font-family:'Plus Jakarta Sans'; font-size:12.5px;">—</span></div>
             <div id="eks-badge-stabil"></div>
             <div class="conclusion" id="eks-conclusion-box"><div class="tag" id="eks-conclusion-tag">Atom Netral</div><div class="txt" id="eks-conclusion-txt">Jumlah proton sama dengan jumlah elektron.</div></div>
+
+            <div class="quiz-card">
+              <div class="quiz-card-head">
+                <h3 style="margin:0;">🎯 Cek Pemahaman</h3>
+                <span class="quiz-score-badge" id="eks-quiz-score">0/0</span>
+              </div>
+              <div id="eks-quiz-body" style="font-size:13px; color:var(--ink-soft);">Ubah-ubah atom di kiri, lalu coba jawab soal tentang atom yang sedang tampil.</div>
+              <button class="btn btn-primary btn-sm" style="width:100%; margin-top:10px;" onclick="eksQuiz.ask(eksplorasi.currentEntry(), eksplorasi.state)">Soal baru dari atom ini ▸</button>
+            </div>
+            <div id="eks-save-status" style="font-size:12px; color:var(--ink-soft); margin-top:8px;"></div>
+            <button class="btn btn-ghost btn-sm" style="width:100%; margin-top:6px;" onclick="saveEksplorasiScore()">💾 Simpan skor sesi ini</button>
           </div>
         </div>
       </div>
@@ -387,6 +419,13 @@
             <div class="info-row"><span class="k">Lambang unsur</span><span class="v" id="tp-info-lambang">Li</span></div>
             <div class="info-row"><span class="k">Nama unsur</span><span class="v" id="tp-info-nama" style="font-family:'Plus Jakarta Sans';">Litium</span></div>
             <div class="hint-box">Proton &amp; elektron dikunci supaya kamu fokus mengamati efek perubahan neutron saja.</div>
+            <div class="quiz-card" id="tp-quiz-card" style="display:none;">
+              <div class="quiz-card-head">
+                <h3 style="margin:0;">🎯 Cek Pemahaman</h3>
+                <span class="quiz-score-badge" id="tp-quiz-score">0/0</span>
+              </div>
+              <div id="tp-quiz-body"></div>
+            </div>
             <button class="btn btn-primary" id="tp-btn-lanjut" style="width:100%; margin-top:14px; display:none;" onclick="terpandu.nextStep()">Lanjut ▸</button>
           </div>
         </div>
@@ -1570,6 +1609,167 @@ function createAtomEngine(prefix, opts){
 const eksplorasi = createAtomEngine('eks', { initialProton: 1, initialNeutron: 0 });
 eksplorasi.render();
 
+function openEksplorasi(){
+  eksStartTime = performance.now();
+  eksQuiz.reset();
+  document.getElementById('eks-quiz-body').innerHTML = '<span style="font-size:13px;color:var(--ink-soft);">Ubah-ubah atom di kiri, lalu coba jawab soal tentang atom yang sedang tampil.</span>';
+  document.getElementById('eks-save-status').textContent = '';
+  showScreen('screen-eksplorasi');
+  eksplorasi.render();
+}
+
+/* ============ 5b. MESIN SOAL GENERIK (campuran tipe, dari state atom saat ini — G.3) ============ */
+function shuffleArr(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+function pickRandom(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+function buildQuestionPool(entry, state){
+  const A = entry.nomorMassa, Z = entry.proton, N = entry.neutron, E = state.elektron;
+  const pool = [];
+
+  pool.push(() => {
+    const benar = Math.random() < 0.5;
+    const nilaiTampil = benar ? Z : Z + (Math.random()<0.5 ? 1 : -1) * (1 + Math.floor(Math.random()*2));
+    return { type:'bs', prompt:`Atom ini memiliki ${nilaiTampil} proton.`, correct: benar, explain:`Nomor atom (Z) atom ini sebenarnya ${Z}.` };
+  });
+  pool.push(() => {
+    const benar = Math.random() < 0.5;
+    const nilaiTampil = benar ? A : A + (Math.random()<0.5 ? 1 : -1) * (1 + Math.floor(Math.random()*2));
+    return { type:'bs', prompt:`Nomor massa (A) atom ini adalah ${nilaiTampil}.`, correct: benar, explain:`Nomor massa A = proton + neutron = ${A}.` };
+  });
+  pool.push(() => {
+    const isNetral = E === Z;
+    const klaimNetral = Math.random() < 0.5;
+    const correct = klaimNetral ? isNetral : !isNetral;
+    return { type:'bs', prompt: klaimNetral ? 'Atom ini dalam keadaan netral.' : 'Atom ini adalah ion.', correct,
+      explain: isNetral ? 'Elektron sama dengan proton → netral.' : 'Elektron tidak sama dengan proton → ion.' };
+  });
+
+  pool.push(() => {
+    let opts = [...new Set([N, N+1, Math.max(0,N-1), N+2, Math.max(0,N-2)])];
+    opts = shuffleArr(opts).slice(0,4);
+    if(!opts.includes(N)) opts[0] = N;
+    return { type:'pg', prompt:'Berapa jumlah neutron pada atom ini?', options: shuffleArr(opts), correct: N };
+  });
+  pool.push(() => {
+    let opts = [...new Set([A, A+1, Math.max(1,A-1), A+2, Math.max(1,A-2)])];
+    opts = shuffleArr(opts).slice(0,4);
+    if(!opts.includes(A)) opts[0] = A;
+    return { type:'pg', prompt:'Berapa nomor massa (A) atom ini?', options: shuffleArr(opts), correct: A };
+  });
+  pool.push(() => {
+    const lain = shuffleArr([...new Set(dataIsotop.filter(d=>d.lambang!==entry.lambang).map(d=>d.lambang))]).slice(0,3);
+    return { type:'pg', prompt:'Apa lambang unsur ini?', options: shuffleArr([entry.lambang, ...lain]), correct: entry.lambang };
+  });
+
+  pool.push(() => ({ type:'isian', prompt:'Ketik jumlah proton pada atom ini:', correct: Z }));
+  pool.push(() => ({ type:'isian', prompt:'Ketik jumlah neutron pada atom ini:', correct: N }));
+  pool.push(() => ({ type:'isian', prompt:'Ketik nomor massa (A) atom ini:', correct: A }));
+
+  return pool;
+}
+
+function renderQuestion(prefix, q, onAnswered){
+  const body = document.getElementById(prefix + '-quiz-body');
+  if(!body) return;
+  body.innerHTML = '';
+
+  const promptEl = document.createElement('div');
+  promptEl.className = 'quiz-prompt';
+  promptEl.textContent = q.prompt;
+  body.appendChild(promptEl);
+
+  const feedbackEl = document.createElement('div');
+  feedbackEl.className = 'quiz-feedback';
+
+  function finish(isCorrect, buttons){
+    (buttons||[]).forEach(b => b.disabled = true);
+    feedbackEl.classList.add('show', isCorrect ? 'correct' : 'wrong');
+    feedbackEl.textContent = isCorrect
+      ? ('✓ Benar!' + (q.explain ? ' ' + q.explain : ''))
+      : ('✗ Kurang tepat — jawaban benar: ' + q.correct + (q.explain ? '. ' + q.explain : ''));
+    onAnswered(isCorrect);
+  }
+
+  if(q.type === 'bs'){
+    const wrap = document.createElement('div'); wrap.className = 'quiz-options';
+    const btnBenar = document.createElement('button'); btnBenar.className='quiz-opt-btn'; btnBenar.textContent='Benar';
+    const btnSalah = document.createElement('button'); btnSalah.className='quiz-opt-btn'; btnSalah.textContent='Salah';
+    const buttons = [btnBenar, btnSalah];
+    btnBenar.onclick = () => { const ok = q.correct===true; btnBenar.classList.add(ok?'correct':'wrong'); if(!ok) btnSalah.classList.add('correct'); finish(ok, buttons); };
+    btnSalah.onclick = () => { const ok = q.correct===false; btnSalah.classList.add(ok?'correct':'wrong'); if(!ok) btnBenar.classList.add('correct'); finish(ok, buttons); };
+    wrap.append(btnBenar, btnSalah);
+    body.appendChild(wrap);
+  } else if(q.type === 'pg'){
+    const wrap = document.createElement('div'); wrap.className = 'quiz-options';
+    const buttons = [];
+    q.options.forEach(opt => {
+      const btn = document.createElement('button'); btn.className='quiz-opt-btn'; btn.textContent = opt;
+      btn.onclick = () => {
+        const ok = opt === q.correct;
+        btn.classList.add(ok ? 'correct' : 'wrong');
+        if(!ok) buttons.forEach(b => { if(String(b.textContent) === String(q.correct)) b.classList.add('correct'); });
+        finish(ok, buttons);
+      };
+      buttons.push(btn); wrap.appendChild(btn);
+    });
+    body.appendChild(wrap);
+  } else if(q.type === 'isian'){
+    const wrap = document.createElement('div'); wrap.className = 'quiz-numeric';
+    const input = document.createElement('input'); input.type='number'; input.placeholder='?';
+    const btn = document.createElement('button'); btn.className='btn btn-primary btn-sm'; btn.textContent='Cek';
+    btn.onclick = () => { const ok = Number(input.value) === q.correct; input.disabled = true; finish(ok, [btn]); };
+    wrap.append(input, btn);
+    body.appendChild(wrap);
+  }
+  body.appendChild(feedbackEl);
+}
+
+function createQuizRunner(prefix, opts){
+  opts = opts || {};
+  const score = { total: 0, benar: 0 };
+  function ask(entry, state){
+    const q = pickRandom(buildQuestionPool(entry, state))();
+    renderQuestion(prefix, q, (isCorrect) => {
+      score.total++; if(isCorrect) score.benar++;
+      const badge = document.getElementById(prefix + '-quiz-score');
+      if(badge) badge.textContent = `${score.benar}/${score.total}`;
+      if(opts.onAnswered) opts.onAnswered(isCorrect, score);
+    });
+  }
+  function reset(){
+    score.total = 0; score.benar = 0;
+    const badge = document.getElementById(prefix + '-quiz-score');
+    if(badge) badge.textContent = '0/0';
+    const body = document.getElementById(prefix + '-quiz-body');
+    if(body) body.innerHTML = '';
+  }
+  return { ask, reset, score };
+}
+
+const eksQuiz = createQuizRunner('eks');
+let eksStartTime = null;
+
+async function saveEksplorasiScore(){
+  const statusEl = document.getElementById('eks-save-status');
+  if(!currentUser){ statusEl.textContent = 'Masuk sebagai tamu — skor tidak disimpan ke server.'; return; }
+  if(eksQuiz.score.total === 0){ statusEl.textContent = 'Jawab minimal 1 soal dulu sebelum menyimpan.'; return; }
+  const waktu = Math.max(1, Math.round((performance.now() - eksStartTime) / 1000));
+  statusEl.textContent = 'Menyimpan…';
+  try{
+    await apiPost('saveLatihanIndividu', {
+      kelas: currentUser.kelas, nama: currentUser.nama, materi: 'eksplorasi-bebas',
+      totalSoal: eksQuiz.score.total, totalBenar: eksQuiz.score.benar, waktu
+    });
+    statusEl.textContent = `✓ Tersimpan (${eksQuiz.score.benar}/${eksQuiz.score.total}).`;
+  } catch(err){
+    statusEl.textContent = '⚠ Gagal menyimpan: ' + err.message;
+  }
+}
+
 /* ============ 6. INSTANCE: Menemukan Pola (Terpandu) ============ */
 const tpSteps = [
   {
@@ -1599,9 +1799,14 @@ const terpandu = createAtomEngine('tp', {
       document.getElementById('tp-insight-tag').textContent = tpSteps[tpIndex].insightTag;
       document.getElementById('tp-insight-txt').textContent = tpSteps[tpIndex].insightTxt;
       document.getElementById('tp-insight').classList.add('show');
-      document.getElementById('tp-btn-lanjut').style.display = 'inline-flex';
+      document.getElementById('tp-quiz-card').style.display = 'block';
+      tpQuiz.ask(terpandu.currentEntry(), terpandu.state);
     }
   }
+});
+
+const tpQuiz = createQuizRunner('tp', {
+  onAnswered(){ document.getElementById('tp-btn-lanjut').style.display = 'inline-flex'; }
 });
 
 function renderTpDots(){
@@ -1618,6 +1823,7 @@ function loadTpStep(){
   const s = tpSteps[tpIndex];
   tpInsightShown = false;
   document.getElementById('tp-insight').classList.remove('show');
+  document.getElementById('tp-quiz-card').style.display = 'none';
   document.getElementById('tp-btn-lanjut').style.display = 'none';
   document.getElementById('tp-question').textContent = s.question;
   terpandu.setProton(s.proton, s.neutron);
@@ -1644,6 +1850,10 @@ async function saveTerpanduProgress(){
     statusEl.textContent = 'Masuk sebagai tamu — progres tidak disimpan ke server.';
     return;
   }
+  if(tpQuiz.score.total === 0){
+    statusEl.textContent = 'Belum ada soal yang dijawab, progres tidak disimpan.';
+    return;
+  }
   const waktu = Math.max(1, Math.round((performance.now() - tpStartTime) / 1000));
   statusEl.textContent = 'Menyimpan progres…';
   try{
@@ -1651,11 +1861,11 @@ async function saveTerpanduProgress(){
       kelas: currentUser.kelas,
       nama: currentUser.nama,
       materi: 'pengenalan-isotop',
-      totalSoal: tpSteps.length,
-      totalBenar: tpSteps.length, // mode terpandu = penyelesaian, bukan kuis skor benar/salah
+      totalSoal: tpQuiz.score.total,
+      totalBenar: tpQuiz.score.benar,
       waktu
     });
-    statusEl.textContent = '✓ Progres tersimpan ke Google Sheet.';
+    statusEl.textContent = `✓ Progres tersimpan (${tpQuiz.score.benar}/${tpQuiz.score.total} benar).`;
   } catch(err){
     statusEl.textContent = '⚠ Gagal menyimpan: ' + err.message;
   }
@@ -1664,6 +1874,7 @@ async function saveTerpanduProgress(){
 function openTerpandu(){
   tpIndex = 0;
   tpStartTime = performance.now();
+  tpQuiz.reset();
   document.getElementById('tp-content-wrap').style.display = 'block';
   document.getElementById('tp-closing').style.display = 'none';
   showScreen('screen-terpandu');
