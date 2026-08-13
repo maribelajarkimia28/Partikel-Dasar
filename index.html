@@ -257,14 +257,19 @@
   .insight-pop .tag{ font-family:'Baloo 2'; font-weight:700; font-size:13px; color:var(--hijau); text-transform:uppercase; }
   .insight-pop .txt{ font-size:13px; color:var(--ink); margin-top:5px; line-height:1.5; }
 
-  .compare-wrap{ display:flex; gap:16px; justify-content:center; align-items:center; padding:0 24px; }
-  .compare-card{ background:#fff; border-radius:16px; box-shadow:var(--bayang-kecil); padding:16px 20px; text-align:center; min-width:150px; }
-  .compare-card .notasi{ font-family:'JetBrains Mono'; font-size:26px; font-weight:600; }
-  .compare-card .notasi sup{ font-size:13px; } .compare-card .notasi sub{ font-size:13px; }
-  .compare-card .nama{ font-size:12px; color:var(--ink-soft); margin-top:4px; font-weight:600; }
-  .compare-eq{ font-family:'Baloo 2'; font-weight:800; font-size:22px; color:var(--primary); }
+  .compare-wrap{ display:flex; gap:28px; justify-content:center; align-items:center; padding:0 24px; }
+  .compare-card{ background:#fff; border-radius:20px; box-shadow:var(--bayang); padding:28px 34px; text-align:center; min-width:190px; }
+  .compare-card .notasi{ font-family:'JetBrains Mono'; font-size:44px; font-weight:700; }
+  .compare-card .notasi sup{ font-size:22px; } .compare-card .notasi sub{ font-size:22px; }
+  .compare-card .nama{ font-size:13.5px; color:var(--ink-soft); margin-top:8px; font-weight:600; }
+  .compare-eq{ font-family:'Baloo 2'; font-weight:800; font-size:26px; color:var(--primary); }
 
-  .closing-content{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px; padding:20px 40px; height:100%; }
+  .closing-carousel{ display:flex; flex-direction:column; height:100%; padding:16px 32px 14px; }
+  .closing-topbar{ display:flex; justify-content:center; padding-bottom:6px; }
+  .closing-slide{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; width:100%; overflow:hidden; }
+  .closing-nav{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding-top:8px; }
+  .closing-def{ max-width:640px; text-align:center; color:var(--ink-soft); font-size:15.5px; line-height:1.6; }
+  .closing-example-note{ font-size:12.5px; color:var(--ink-soft); }
   .def-grid{ display:flex; gap:16px; }
   .def-card{ background:#fff; border-radius:16px; box-shadow:var(--bayang-kecil); padding:18px 20px; width:230px; }
   .def-card .t{ font-family:'Baloo 2'; font-weight:700; color:var(--primary-dark); font-size:15px; margin-bottom:6px; }
@@ -414,9 +419,14 @@
           <div class="panel" id="tp-panel-kontrol">
             <div class="guide-card"><div class="eyebrow">Pertanyaan Pemandu</div><div class="q" id="tp-question">Memuat…</div></div>
 
-            <div class="ctrl-row proton locked"><div class="ctrl-label"><span class="name">Proton 🔒</span><span class="count" id="tp-val-proton">3</span></div>
+            <div class="quiz-card" id="tp-predict-card">
+              <div class="quiz-card-head"><h3 style="margin:0;">🔮 Prediksi Dulu</h3></div>
+              <div id="tp-predict-body"></div>
+            </div>
+
+            <div class="ctrl-row proton locked" id="tp-ctrl-proton-row"><div class="ctrl-label"><span class="name">Proton 🔒</span><span class="count" id="tp-val-proton">3</span></div>
               <div class="stepper"><button class="step-btn" disabled>–</button><button class="step-btn" disabled>+</button></div></div>
-            <div class="ctrl-row neutron"><div class="ctrl-label"><span class="name">Neutron</span><span class="count" id="tp-val-neutron">3</span></div>
+            <div class="ctrl-row neutron" id="tp-ctrl-neutron-row"><div class="ctrl-label"><span class="name">Neutron</span><span class="count" id="tp-val-neutron">3</span></div>
               <div class="stepper"><button class="step-btn" id="tp-btn-neutron-minus" onclick="terpandu.stepNeutron(-1)">–</button><button class="step-btn" id="tp-btn-neutron-plus" onclick="terpandu.stepNeutron(1)">+</button></div></div>
             <div class="ctrl-row elektron locked"><div class="ctrl-label"><span class="name">Elektron 🔒</span><span class="count" id="tp-val-elektron">3</span></div>
               <div class="stepper"><button class="step-btn" disabled>–</button><button class="step-btn" disabled>+</button></div></div>
@@ -447,25 +457,16 @@
 
       <!-- Layar penutup: definisi + perbandingan isobar/isoton -->
       <div class="content" id="tp-closing" style="display:none;">
-        <div class="closing-content">
-          <h2 style="font-family:'Baloo 2'; color:var(--primary-dark); margin:0;">Tiga Pola, Tiga Istilah</h2>
-          <div class="compare-wrap">
-            <div class="compare-card"><div class="notasi"><sup>14</sup><sub>6</sub>C</div><div class="nama">Z=6, N=8</div></div>
-            <div class="compare-eq">A sama</div>
-            <div class="compare-card"><div class="notasi"><sup>14</sup><sub>7</sub>N</div><div class="nama">Z=7, N=7</div></div>
+        <div class="closing-carousel">
+          <div class="closing-topbar">
+            <div class="progress-dots" id="tp-closing-dots"></div>
           </div>
-          <div class="compare-wrap">
-            <div class="compare-card"><div class="notasi"><sup>14</sup><sub>6</sub>C</div><div class="nama">Z=6, N=8</div></div>
-            <div class="compare-eq">N sama</div>
-            <div class="compare-card"><div class="notasi"><sup>16</sup><sub>8</sub>O</div><div class="nama">Z=8, N=8</div></div>
+          <div class="closing-slide" id="tp-closing-slide"></div>
+          <div class="closing-nav">
+            <button class="btn btn-ghost" id="tp-closing-prev" onclick="tpClosingNav(-1)">◂ Sebelumnya</button>
+            <div id="tp-save-status" style="font-size:12.5px; color:var(--ink-soft);"></div>
+            <button class="btn btn-primary" id="tp-closing-next" onclick="tpClosingNav(1)">Berikutnya ▸</button>
           </div>
-          <div class="def-grid">
-            <div class="def-card"><div class="t">Isotop</div><div class="d">Proton (Z) sama, neutron beda → unsur sama, massa beda. Contoh: Li-6 &amp; Li-7.</div></div>
-            <div class="def-card"><div class="t">Isobar</div><div class="d">Nomor massa (A) sama, proton beda → unsur beda, massa kebetulan sama. Contoh: C-14 &amp; N-14.</div></div>
-            <div class="def-card"><div class="t">Isoton</div><div class="d">Jumlah neutron sama, proton beda → unsur beda, neutron sama. Contoh: C-14 &amp; O-16 (sama-sama 8 neutron).</div></div>
-          </div>
-          <div id="tp-save-status" style="font-size:12.5px; color:var(--ink-soft);"></div>
-          <button class="btn btn-primary" onclick="showScreen('screen-menu')">Selesai — Kembali ke Menu</button>
         </div>
       </div>
 
@@ -482,22 +483,42 @@
 /* ============ 0. KONEKSI BACKEND (Google Apps Script Web App) ============ */
 const API_URL = "https://script.google.com/macros/s/AKfycbxyE1ZkNOjjXkSoBWl7kAc9PEe7Z5S1uu3L63S93g0FwgY4yURUkdnbOmDOmr4RUB2f9Q/exec";
 
+function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+// Apps Script kadang butuh "pemanasan" (cold start) / sesekali membalas redirect sementara
+// yang bukan JSON — retry beberapa kali dengan jeda biasanya menyelesaikannya.
+async function apiFetchWithRetry(url, fetchOpts, retries=3, delayMs=1000){
+  let lastErr;
+  for(let attempt=0; attempt<=retries; attempt++){
+    try{
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+      const res = await fetch(url, { ...fetchOpts, signal: controller.signal });
+      clearTimeout(timeoutId);
+      const text = await res.text();
+      let json;
+      try{ json = JSON.parse(text); }
+      catch(parseErr){ throw new Error('Server belum siap, mencoba lagi…'); }
+      if(!json.ok) throw new Error(json.error);
+      return json.data;
+    } catch(err){
+      lastErr = err;
+      if(attempt < retries) await sleep(delayMs * (attempt + 1));
+    }
+  }
+  throw lastErr;
+}
+
 async function apiGet(action, params){
   const qs = new URLSearchParams({ action, ...(params||{}) });
-  const res = await fetch(`${API_URL}?${qs}`);
-  const json = await res.json();
-  if(!json.ok) throw new Error(json.error);
-  return json.data;
+  return apiFetchWithRetry(`${API_URL}?${qs}`, {});
 }
 async function apiPost(action, payload){
-  const res = await fetch(API_URL, {
+  return apiFetchWithRetry(API_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // hindari CORS preflight
     body: JSON.stringify({ action, payload })
   });
-  const json = await res.json();
-  if(!json.ok) throw new Error(json.error);
-  return json.data;
 }
 
 /* ============ 0b. LOGIN SISWA ============ */
@@ -506,13 +527,16 @@ let siswaData = { kelasList: [], siswa: [] };
 
 async function loadDaftarSiswa(){
   const kelasSelect = document.getElementById('login-kelas');
+  kelasSelect.innerHTML = '<option value="">⏳ Menghubungkan ke server…</option>';
+  document.getElementById('login-error').classList.remove('show');
   try{
     siswaData = await apiGet('daftarSiswa');
     kelasSelect.innerHTML = '<option value="">— pilih kelas —</option>' +
       siswaData.kelasList.map(k => `<option value="${k}">${k}</option>`).join('');
   } catch(err){
     kelasSelect.innerHTML = '<option value="">Gagal memuat data siswa</option>';
-    document.getElementById('login-error').textContent = 'Tidak bisa memuat daftar siswa: ' + err.message;
+    document.getElementById('login-error').innerHTML = 'Tidak bisa memuat daftar siswa: ' + err.message +
+      ' <button class="btn btn-ghost btn-sm" style="margin-left:6px; min-height:22px; padding:3px 10px; font-size:11px;" onclick="loadDaftarSiswa()">🔄 Coba lagi</button>';
     document.getElementById('login-error').classList.add('show');
   }
 }
@@ -1655,49 +1679,63 @@ function shuffleArr(arr){
 }
 function pickRandom(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
 
-function buildQuestionPool(entry, state){
+// 6 KONSEP unik per atom (proton, neutron, elektron, nomor massa, lambang, netral/ion).
+// Tiap konsep hanya ditanyakan SEKALI per atom (berapa pun tipe soalnya) supaya tidak ada
+// pertanyaan yang secara substansi berulang (mis. neutron ditanya lewat isian lalu pilihan ganda lagi).
+function buildQuestionBank(entry, state){
   const A = entry.nomorMassa, Z = entry.proton, N = entry.neutron, E = state.elektron;
-  const pool = [];
 
-  pool.push({ key:'proton-bs', gen: () => {
-    const benar = Math.random() < 0.5;
-    const nilaiTampil = benar ? Z : Z + (Math.random()<0.5 ? 1 : -1) * (1 + Math.floor(Math.random()*2));
-    return { type:'bs', prompt:`Atom ini memiliki ${nilaiTampil} proton.`, correct: benar, explain:`Nomor atom (Z) atom ini sebenarnya ${Z}.` };
-  }});
-  pool.push({ key:'massa-bs', gen: () => {
-    const benar = Math.random() < 0.5;
-    const nilaiTampil = benar ? A : A + (Math.random()<0.5 ? 1 : -1) * (1 + Math.floor(Math.random()*2));
-    return { type:'bs', prompt:`Nomor massa (A) atom ini adalah ${nilaiTampil}.`, correct: benar, explain:`Nomor massa A = proton + neutron = ${A}.` };
-  }});
-  pool.push({ key:'netral-bs', gen: () => {
-    const isNetral = E === Z;
-    const klaimNetral = Math.random() < 0.5;
-    const correct = klaimNetral ? isNetral : !isNetral;
-    return { type:'bs', prompt: klaimNetral ? 'Atom ini dalam keadaan netral.' : 'Atom ini adalah ion.', correct,
-      explain: isNetral ? 'Elektron sama dengan proton → netral.' : 'Elektron tidak sama dengan proton → ion.' };
-  }});
-  pool.push({ key:'neutron-pg', gen: () => {
-    let opts = [...new Set([N, N+1, Math.max(0,N-1), N+2, Math.max(0,N-2)])];
+  function pgOpts(nilai, minVal){
+    let opts = [...new Set([nilai, nilai+1, Math.max(minVal,nilai-1), nilai+2, Math.max(minVal,nilai-2)])];
     opts = shuffleArr(opts).slice(0,4);
-    if(!opts.includes(N)) opts[0] = N;
-    return { type:'pg', prompt:'Berapa jumlah neutron pada atom ini?', options: shuffleArr(opts), correct: N };
-  }});
-  pool.push({ key:'massa-pg', gen: () => {
-    let opts = [...new Set([A, A+1, Math.max(1,A-1), A+2, Math.max(1,A-2)])];
-    opts = shuffleArr(opts).slice(0,4);
-    if(!opts.includes(A)) opts[0] = A;
-    return { type:'pg', prompt:'Berapa nomor massa (A) atom ini?', options: shuffleArr(opts), correct: A };
-  }});
-  pool.push({ key:'lambang-pg', gen: () => {
-    const lain = shuffleArr([...new Set(dataIsotop.filter(d=>d.lambang!==entry.lambang).map(d=>d.lambang))]).slice(0,3);
-    return { type:'pg', prompt:'Apa lambang unsur ini?', options: shuffleArr([entry.lambang, ...lain]), correct: entry.lambang };
-  }});
-  pool.push({ key:'proton-isian', gen: () => ({ type:'isian', prompt:'Ketik jumlah proton pada atom ini:', correct: Z }) });
-  pool.push({ key:'neutron-isian', gen: () => ({ type:'isian', prompt:'Ketik jumlah neutron pada atom ini:', correct: N }) });
-  pool.push({ key:'massa-isian', gen: () => ({ type:'isian', prompt:'Ketik nomor massa (A) atom ini:', correct: A }) });
+    if(!opts.includes(nilai)) opts[0] = nilai;
+    return shuffleArr(opts);
+  }
+  function bsVariant(labelSatuan, nilai, minVal){
+    const benar = Math.random() < 0.5;
+    const nilaiTampil = benar ? nilai : nilai + (Math.random()<0.5 ? 1 : -1) * (1 + Math.floor(Math.random()*2));
+    return { type:'bs', prompt:`Atom ini memiliki ${Math.max(minVal,nilaiTampil)} ${labelSatuan}.`, correct: benar, explain:`Jumlah sebenarnya: ${nilai}.` };
+  }
 
-  return pool;
+  return {
+    proton: {
+      bs: () => bsVariant('proton', Z, 0),
+      pg: () => ({ type:'pg', prompt:'Berapa jumlah proton pada atom ini?', options: pgOpts(Z,0), correct: Z }),
+      isian: () => ({ type:'isian', prompt:'Ketik jumlah proton pada atom ini:', correct: Z }),
+    },
+    neutron: {
+      bs: () => bsVariant('neutron', N, 0),
+      pg: () => ({ type:'pg', prompt:'Berapa jumlah neutron pada atom ini?', options: pgOpts(N,0), correct: N }),
+      isian: () => ({ type:'isian', prompt:'Ketik jumlah neutron pada atom ini:', correct: N }),
+    },
+    elektron: {
+      bs: () => bsVariant('elektron', E, 0),
+      pg: () => ({ type:'pg', prompt:'Berapa jumlah elektron pada atom/ion ini?', options: pgOpts(E,0), correct: E }),
+      isian: () => ({ type:'isian', prompt:'Ketik jumlah elektron pada atom/ion ini:', correct: E }),
+    },
+    massa: {
+      bs: () => bsVariant('nomor massa (A)', A, 1),
+      pg: () => ({ type:'pg', prompt:'Berapa nomor massa (A) atom ini?', options: pgOpts(A,1), correct: A }),
+      isian: () => ({ type:'isian', prompt:'Ketik nomor massa (A) atom ini:', correct: A }),
+    },
+    lambang: {
+      pg: () => {
+        const lain = shuffleArr([...new Set(dataIsotop.filter(d=>d.lambang!==entry.lambang).map(d=>d.lambang))]).slice(0,3);
+        return { type:'pg', prompt:'Apa lambang unsur ini?', options: shuffleArr([entry.lambang, ...lain]), correct: entry.lambang };
+      },
+    },
+    'netral-ion': {
+      bs: () => {
+        const isNetral = E === Z;
+        const klaimNetral = Math.random() < 0.5;
+        const correct = klaimNetral ? isNetral : !isNetral;
+        return { type:'bs', prompt: klaimNetral ? 'Atom ini dalam keadaan netral.' : 'Atom ini adalah ion.', correct,
+          explain: isNetral ? 'Elektron sama dengan proton → netral.' : 'Elektron tidak sama dengan proton → ion.' };
+      },
+    },
+  };
 }
+const ALL_QUIZ_CONCEPTS = ['proton','neutron','elektron','massa','lambang','netral-ion'];
 
 function renderQuestion(prefix, q, onAnswered){
   const body = document.getElementById(prefix + '-quiz-body');
@@ -1760,32 +1798,42 @@ const QUIZ_MAX_PER_ATOM = 6;
 function createQuizRunner(prefix, opts){
   opts = opts || {};
   const score = { total: 0, benar: 0 };
-  const askedByEntry = {}; // { entryId: Set(key) }
+  const askedByEntry = {}; // { entryId: { concepts: Set, formatCount: {bs,pg,isian} } }
 
-  function isMaxed(entry, state){
-    const asked = askedByEntry[entry.id];
-    if(!asked) return false;
-    const poolSize = buildQuestionPool(entry, state).length;
-    return asked.size >= Math.min(QUIZ_MAX_PER_ATOM, poolSize);
+  function getRecord(entryId){
+    if(!askedByEntry[entryId]) askedByEntry[entryId] = { concepts: new Set(), formatCount: { bs:0, pg:0, isian:0 } };
+    return askedByEntry[entryId];
+  }
+
+  function isMaxed(entry){
+    const rec = askedByEntry[entry.id];
+    if(!rec) return false;
+    return rec.concepts.size >= Math.min(QUIZ_MAX_PER_ATOM, ALL_QUIZ_CONCEPTS.length);
   }
 
   function ask(entry, state){
-    if(!askedByEntry[entry.id]) askedByEntry[entry.id] = new Set();
-    const asked = askedByEntry[entry.id];
-    const pool = buildQuestionPool(entry, state).filter(p => !asked.has(p.key));
-    if(pool.length === 0){
+    const bank = buildQuestionBank(entry, state);
+    const rec = getRecord(entry.id);
+    const sisaKonsep = ALL_QUIZ_CONCEPTS.filter(c => !rec.concepts.has(c) && bank[c]);
+    if(rec.concepts.size >= QUIZ_MAX_PER_ATOM || sisaKonsep.length === 0){
       if(opts.onMaxed) opts.onMaxed(entry);
       return;
     }
-    const chosen = pickRandom(pool);
-    asked.add(chosen.key);
-    const q = chosen.gen();
-    if(opts.onAskStart) opts.onAskStart();
+    const concept = pickRandom(sisaKonsep);
+    const formatTersedia = shuffleArr(Object.keys(bank[concept]));
+    // pilih tipe soal yang paling jarang dipakai sejauh ini di sesi ini -> distribusi merata bs/pg/isian
+    let bestFormat = formatTersedia[0], bestCount = Infinity;
+    formatTersedia.forEach(f => { if(rec.formatCount[f] < bestCount){ bestCount = rec.formatCount[f]; bestFormat = f; } });
+
+    rec.concepts.add(concept);
+    rec.formatCount[bestFormat]++;
+    const q = bank[concept][bestFormat]();
+
     renderQuestion(prefix, q, (isCorrect) => {
       score.total++; if(isCorrect) score.benar++;
       const badge = document.getElementById(prefix + '-quiz-score');
       if(badge) badge.textContent = `${score.benar}/${score.total}`;
-      if(opts.onAnswered) opts.onAnswered(isCorrect, score, isMaxed(entry, state));
+      if(opts.onAnswered) opts.onAnswered(isCorrect, score, isMaxed(entry));
     });
   }
   function reset(){
@@ -1852,18 +1900,27 @@ function eksSelesaiKuisAtom(){
 
 async function saveEksplorasiScore(){
   const statusEl = document.getElementById('eks-save-status');
+  const btn = document.getElementById('eks-save-btn');
   if(!currentUser){ statusEl.textContent = 'Masuk sebagai tamu — skor tidak disimpan ke server.'; return; }
   if(eksQuiz.score.total === 0){ statusEl.textContent = 'Jawab minimal 1 soal dulu sebelum menyimpan.'; return; }
   const waktu = Math.max(1, Math.round((performance.now() - eksStartTime) / 1000));
   statusEl.textContent = 'Menyimpan…';
+  btn.disabled = true;
   try{
+    const totalSoal = eksQuiz.score.total, totalBenar = eksQuiz.score.benar;
     await apiPost('saveLatihanIndividu', {
       kelas: currentUser.kelas, nama: currentUser.nama, materi: 'eksplorasi-bebas',
-      totalSoal: eksQuiz.score.total, totalBenar: eksQuiz.score.benar, waktu
+      totalSoal, totalBenar, waktu
     });
-    statusEl.textContent = `✓ Tersimpan (${eksQuiz.score.benar}/${eksQuiz.score.total}).`;
+    statusEl.textContent = `✓ Tersimpan (${totalBenar}/${totalSoal}).`;
+    eksQuiz.reset();
+    eksSelesaiKuisAtom();
+    document.getElementById('eks-quiz-body').innerHTML = '<span style="font-size:13px;color:var(--ink-soft);">Skor tersimpan. Klik "Mulai Kuis" untuk sesi baru.</span>';
+    eksStartTime = performance.now();
   } catch(err){
     statusEl.textContent = '⚠ Gagal menyimpan: ' + err.message;
+  } finally {
+    btn.disabled = false;
   }
 }
 
@@ -1896,6 +1953,7 @@ const terpandu = createAtomEngine('tp', {
   onNeutronChange(state){
     if(!tpInsightShown && state.neutron === tpSteps[tpIndex].targetNeutron){
       tpInsightShown = true;
+      terpandu.lockControls(true); // BUGFIX: kunci kontrol supaya atom tak berubah lagi selagi soal dijawab
       document.getElementById('tp-insight-tag').textContent = tpSteps[tpIndex].insightTag;
       document.getElementById('tp-insight-txt').textContent = tpSteps[tpIndex].insightTxt;
       document.getElementById('tp-insight').classList.add('show');
@@ -1919,6 +1977,10 @@ function renderTpDots(){
   document.getElementById('tp-navlabel').textContent = `Langkah ${tpIndex+1} dari ${tpSteps.length}`;
 }
 
+function tpSetNeutronRowLocked(locked){
+  document.getElementById('tp-ctrl-neutron-row').classList.toggle('locked', locked);
+}
+
 function loadTpStep(){
   const s = tpSteps[tpIndex];
   tpInsightShown = false;
@@ -1927,17 +1989,101 @@ function loadTpStep(){
   document.getElementById('tp-btn-lanjut').style.display = 'none';
   document.getElementById('tp-question').textContent = s.question;
   terpandu.setProton(s.proton, s.neutron);
+  terpandu.lockControls(true); // dikunci dulu sampai prediksi dijawab
+  tpSetNeutronRowLocked(true);
   terpandu.render();
   renderTpDots();
+
+  // Kartu prediksi: siswa menebak dulu sebelum bertindak (scaffolding penemuan pola)
+  document.getElementById('tp-predict-card').style.display = 'block';
+  const prediksiQ = {
+    type: 'bs',
+    prompt: `Jika NEUTRON unsur ${s.namaUnsurUntukPrediksi || terpandu.currentEntry().nama} ditambah, PROTON-nya akan ikut berubah.`,
+    correct: false,
+    explain: 'Proton menentukan identitas unsur — berapa pun neutronnya, proton (dan nama unsurnya) tetap sama.'
+  };
+  renderQuestion('tp-predict', prediksiQ, () => {
+    document.getElementById('tp-predict-card').style.display = 'none';
+    terpandu.lockControls(false);
+    tpSetNeutronRowLocked(false);
+  });
 }
 
 let tpStartTime = null;
+
+/* ============ Carousel Penutup: Isotop / Isobar / Isoton (contoh dari data sungguhan) ============ */
+function contohIsotop(){
+  const kandidat = availableProtons.filter(p => isotopesForProton(p).length >= 2);
+  const z = pickRandom(kandidat);
+  return shuffleArr(isotopesForProton(z)).slice(0,2).sort((a,b)=>a.neutron-b.neutron);
+}
+function contohIsobar(){
+  const byMassa = {};
+  dataIsotop.forEach(d => { (byMassa[d.nomorMassa] = byMassa[d.nomorMassa] || []).push(d); });
+  const kandidat = Object.values(byMassa).filter(list => new Set(list.map(d=>d.proton)).size >= 2);
+  const list = pickRandom(kandidat);
+  const satuPerProton = Object.values(list.reduce((acc,d)=>{ acc[d.proton]=d; return acc; },{}));
+  return shuffleArr(satuPerProton).slice(0,2);
+}
+function contohIsoton(){
+  const byNeutron = {};
+  dataIsotop.forEach(d => { (byNeutron[d.neutron] = byNeutron[d.neutron] || []).push(d); });
+  const kandidat = Object.values(byNeutron).filter(list => new Set(list.map(d=>d.proton)).size >= 2);
+  const list = pickRandom(kandidat);
+  const satuPerProton = Object.values(list.reduce((acc,d)=>{ acc[d.proton]=d; return acc; },{}));
+  return shuffleArr(satuPerProton).slice(0,2);
+}
+
+const CLOSING_SLIDES = [
+  { key:'isotop', title:'Isotop', def:'Proton (Z) sama, neutron berbeda → unsur yang sama, nomor massa berbeda.', pick: contohIsotop, sameLabel:'Z sama' },
+  { key:'isobar', title:'Isobar', def:'Nomor massa (A) sama, proton berbeda → unsur berbeda, massa kebetulan sama.', pick: contohIsobar, sameLabel:'A sama' },
+  { key:'isoton', title:'Isoton', def:'Jumlah neutron sama, proton berbeda → unsur berbeda, jumlah neutronnya sama.', pick: contohIsoton, sameLabel:'N sama' },
+];
+let tpClosingIndex = 0;
+let tpClosingExamples = {};
+
+function renderClosingSlide(){
+  const s = CLOSING_SLIDES[tpClosingIndex];
+  if(!tpClosingExamples[s.key]) tpClosingExamples[s.key] = s.pick();
+  const [a, b] = tpClosingExamples[s.key];
+  document.getElementById('tp-closing-slide').innerHTML = `
+    <h2 style="font-family:'Baloo 2'; color:var(--primary-dark); margin:0; font-size:36px;">${s.title}</h2>
+    <p class="closing-def">${s.def}</p>
+    <div class="compare-wrap">
+      <div class="compare-card"><div class="notasi"><sup>${toSup(a.nomorMassa)}</sup><sub>${toSub(a.nomorAtom)}</sub>${a.lambang}</div><div class="nama">${a.nama} · Z=${a.proton}, N=${a.neutron}</div></div>
+      <div class="compare-eq">${s.sameLabel}</div>
+      <div class="compare-card"><div class="notasi"><sup>${toSup(b.nomorMassa)}</sup><sub>${toSub(b.nomorAtom)}</sub>${b.lambang}</div><div class="nama">${b.nama} · Z=${b.proton}, N=${b.neutron}</div></div>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="tpShuffleClosing()">🔀 Contoh lain</button>
+  `;
+  document.getElementById('tp-closing-prev').style.visibility = tpClosingIndex === 0 ? 'hidden' : 'visible';
+  document.getElementById('tp-closing-next').textContent = tpClosingIndex === CLOSING_SLIDES.length-1 ? 'Selesai — Kembali ke Menu ✓' : 'Berikutnya ▸';
+  const dotsWrap = document.getElementById('tp-closing-dots'); dotsWrap.innerHTML = '';
+  CLOSING_SLIDES.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot-step' + (i < tpClosingIndex ? ' done' : i === tpClosingIndex ? ' now' : '');
+    dotsWrap.appendChild(d);
+  });
+}
+function tpShuffleClosing(){
+  const s = CLOSING_SLIDES[tpClosingIndex];
+  tpClosingExamples[s.key] = s.pick();
+  renderClosingSlide();
+}
+function tpClosingNav(dir){
+  if(dir > 0 && tpClosingIndex === CLOSING_SLIDES.length-1){ showScreen('screen-menu'); return; }
+  tpClosingIndex = Math.max(0, Math.min(CLOSING_SLIDES.length-1, tpClosingIndex+dir));
+  renderClosingSlide();
+}
 
 terpandu.nextStep = function(){
   tpIndex++;
   if(tpIndex >= tpSteps.length){
     document.getElementById('tp-content-wrap').style.display = 'none';
     document.getElementById('tp-closing').style.display = 'flex';
+    tpClosingIndex = 0;
+    tpClosingExamples = {};
+    renderClosingSlide();
     saveTerpanduProgress();
   } else {
     loadTpStep();
