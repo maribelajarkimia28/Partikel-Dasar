@@ -274,7 +274,7 @@
   /* ---------- Materi 1: komponen investigasi ---------- */
   .m1-card{ background:#fff; border-radius:18px; box-shadow:var(--bayang-kecil); padding:22px 26px; margin-bottom:16px; }
   .m1-eyebrow{ font-family:'Baloo 2'; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--primary-dark); font-weight:700; margin-bottom:8px; }
-  .m1-prompt{ font-size:15px; color:var(--ink); line-height:1.6; margin-bottom:14px; }
+  .m1-prompt{ font-size:15px; font-weight:700; color:var(--ink); line-height:1.6; margin-bottom:14px; }
   .m1-atom-display{ display:flex; align-items:center; justify-content:center; gap:22px; margin:14px 0; flex-wrap:wrap; }
   .m1-atom-card{ background:var(--cream); border-radius:16px; padding:18px 26px; text-align:center; min-width:150px; }
   .m1-atom-card .notasi{ font-family:'JetBrains Mono'; font-size:38px; font-weight:700; }
@@ -287,7 +287,8 @@
   .m1-table{ width:100%; border-collapse:collapse; margin:14px 0; font-size:13.5px; }
   .m1-table th, .m1-table td{ border:1px solid var(--garis); padding:8px 10px; text-align:center; }
   .m1-table th{ background:var(--cream); font-weight:700; color:var(--ink-soft); }
-  .m1-table td.notasi-cell{ font-family:'JetBrains Mono'; font-weight:600; }
+  .m1-table td.notasi-cell{ font-family:'JetBrains Mono'; font-weight:700; font-size:21px; }
+  .m1-table td.notasi-cell sup, .m1-table td.notasi-cell sub{ font-size:12px; }
   .m1-matrix{ width:100%; border-collapse:collapse; margin:14px 0; font-size:13px; }
   .m1-matrix th, .m1-matrix td{ border:1px solid var(--garis); padding:9px; text-align:center; }
   .m1-matrix th{ background:var(--cream); font-weight:700; color:var(--ink-soft); font-size:12px; }
@@ -386,20 +387,20 @@
           <div class="menu-label">1. Partikel Dasar<br>&amp; Notasi Atom</div>
           <span class="menu-tag" style="background:rgba(42,174,108,0.15); color:var(--hijau);">Tersedia</span>
         </div>
-        <div class="menu-card" onclick="openTerpandu()">
+        <div class="menu-card" onclick="materi2Engine.open()">
           <div class="menu-icon">🔬</div>
           <div class="menu-label">2. Isotop</div>
           <span class="menu-tag" style="background:rgba(42,174,108,0.15); color:var(--hijau);">Tersedia</span>
         </div>
-        <div class="menu-card" style="opacity:.55; cursor:not-allowed;">
+        <div class="menu-card" onclick="materi3Engine.open()">
           <div class="menu-icon">⚖️</div>
           <div class="menu-label">3. Isobar</div>
-          <span class="menu-tag">Segera hadir</span>
+          <span class="menu-tag" style="background:rgba(42,174,108,0.15); color:var(--hijau);">Tersedia</span>
         </div>
-        <div class="menu-card" style="opacity:.55; cursor:not-allowed;">
+        <div class="menu-card" onclick="materi4Engine.open()">
           <div class="menu-icon">🧲</div>
           <div class="menu-label">4. Isoton</div>
-          <span class="menu-tag">Segera hadir</span>
+          <span class="menu-tag" style="background:rgba(42,174,108,0.15); color:var(--hijau);">Tersedia</span>
         </div>
       </div>
       <div class="navbar">
@@ -419,7 +420,68 @@
       </div>
       <div class="navbar">
         <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-materi-hub')">◂ Keluar</button>
-        <span style="font-size:12px;color:var(--ink-soft);" id="m1-navlabel">Langkah 1</span>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <button class="btn btn-ghost btn-sm" id="m1-prev-btn">◂ Sebelumnya</button>
+          <span style="font-size:12px;color:var(--ink-soft);" id="m1-navlabel">Langkah 1</span>
+          <button class="btn btn-ghost btn-sm" id="m1-next-btn">Berikutnya ▸</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SCREEN 2d: MATERI 2 — Isotop ===== -->
+    <div class="screen" id="screen-materi2">
+      <div class="topbar">
+        <div class="brand"><span class="dot"></span>Materi 2: Isotop</div>
+        <div class="progress-dots" id="m2-dots"></div>
+      </div>
+      <div class="content" style="padding:14px 26px; overflow-y:auto;">
+        <div id="m2-step-container" style="max-width:900px; margin:0 auto;"></div>
+      </div>
+      <div class="navbar">
+        <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-materi-hub')">◂ Keluar</button>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <button class="btn btn-ghost btn-sm" id="m2-prev-btn">◂ Sebelumnya</button>
+          <span style="font-size:12px;color:var(--ink-soft);" id="m2-navlabel">Langkah 1</span>
+          <button class="btn btn-ghost btn-sm" id="m2-next-btn">Berikutnya ▸</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SCREEN 2e: MATERI 3 — Isobar ===== -->
+    <div class="screen" id="screen-materi3">
+      <div class="topbar">
+        <div class="brand"><span class="dot"></span>Materi 3: Isobar</div>
+        <div class="progress-dots" id="m3-dots"></div>
+      </div>
+      <div class="content" style="padding:14px 26px; overflow-y:auto;">
+        <div id="m3-step-container" style="max-width:900px; margin:0 auto;"></div>
+      </div>
+      <div class="navbar">
+        <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-materi-hub')">◂ Keluar</button>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <button class="btn btn-ghost btn-sm" id="m3-prev-btn">◂ Sebelumnya</button>
+          <span style="font-size:12px;color:var(--ink-soft);" id="m3-navlabel">Langkah 1</span>
+          <button class="btn btn-ghost btn-sm" id="m3-next-btn">Berikutnya ▸</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SCREEN 2f: MATERI 4 — Isoton ===== -->
+    <div class="screen" id="screen-materi4">
+      <div class="topbar">
+        <div class="brand"><span class="dot"></span>Materi 4: Isoton</div>
+        <div class="progress-dots" id="m4-dots"></div>
+      </div>
+      <div class="content" style="padding:14px 26px; overflow-y:auto;">
+        <div id="m4-step-container" style="max-width:900px; margin:0 auto;"></div>
+      </div>
+      <div class="navbar">
+        <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-materi-hub')">◂ Keluar</button>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <button class="btn btn-ghost btn-sm" id="m4-prev-btn">◂ Sebelumnya</button>
+          <span style="font-size:12px;color:var(--ink-soft);" id="m4-navlabel">Langkah 1</span>
+          <button class="btn btn-ghost btn-sm" id="m4-next-btn">Berikutnya ▸</button>
+        </div>
       </div>
     </div>
 
@@ -2211,8 +2273,8 @@ function openTerpandu(){
 }
 
 /* ================================================================
-   MATERI 1: PARTIKEL DASAR & NOTASI ATOM
-   Alur investigasi: amati → bandingkan → prediksi → uji → generalisasi
+   ENGINE INVESTIGASI GENERIK — dipakai ulang untuk Materi 1–4
+   Alur: amati → bandingkan → prediksi → uji → generalisasi
    ================================================================ */
 function unsurByProton(z){
   return dataIsotop.find(d => d.proton === z) || { lambang:'?', nama:'(tidak ada di data)' };
@@ -2220,12 +2282,13 @@ function unsurByProton(z){
 function notasiHtml(a, z, lambang){
   return `<sup>${toSup(a)}</sup><sub>${toSub(z)}</sub>${lambang}`;
 }
-function m1AtomCard(p, n, ket){
+function invAtomCard(p, n, ket, e){
   const u = unsurByProton(p);
-  return `<div class="m1-atom-card"><div class="notasi">${notasiHtml(p+n, p, u.lambang)}</div><div class="ket">${ket || (u.nama+' · p='+p+', n='+n)}</div></div>`;
+  const ketFinal = (ket ? ket + ' · ' : u.nama + ' · ') + `p=${p}, n=${n}` + (e!==undefined ? `, e=${e}` : '');
+  return `<div class="m1-atom-card"><div class="notasi">${notasiHtml(p+n, p, u.lambang)}</div><div class="ket">${ketFinal}</div></div>`;
 }
 
-function m1MiniMC(container, prompt, options, correct, onAnswered, multi){
+function invMiniMC(container, prompt, options, correct, onAnswered, multi){
   const wrap = document.createElement('div'); wrap.style.marginBottom = '14px';
   if(prompt){ const p = document.createElement('div'); p.className = 'm1-prompt'; p.style.marginBottom = '8px'; p.textContent = prompt; wrap.appendChild(p); }
   const optWrap = document.createElement('div'); optWrap.className = 'quiz-options';
@@ -2268,18 +2331,306 @@ function m1MiniMC(container, prompt, options, correct, onAnswered, multi){
   container.appendChild(wrap);
 }
 
-function m1RevealAndNext(container, revealText){
+function invRevealAndNext(container, revealText, eng){
   const reveal = document.createElement('div'); reveal.className = 'm1-reveal';
   reveal.innerHTML = revealText;
   container.appendChild(reveal);
   setTimeout(() => reveal.classList.add('show'), 50);
+  eng.markComplete();
   const navrow = document.createElement('div'); navrow.className = 'm1-navrow';
   const btn = document.createElement('button'); btn.className = 'btn btn-primary'; btn.textContent = 'Lanjut ▸';
-  btn.onclick = m1Next;
+  btn.onclick = () => eng.next();
   navrow.appendChild(btn);
   container.appendChild(navrow);
 }
 
+function createInvestigationEngine(cfg){
+  // cfg: { prefix (untuk id DOM, mis. 'm1'), screenId (mis. 'screen-materi1'), steps, onFinish }
+  const state = { index: 0, completed: [] };
+  const idOf = (name) => cfg.prefix + '-' + name;
+
+  function renderNavMeta(){
+    const dotsWrap = document.getElementById(idOf('dots'));
+    if(dotsWrap){
+      dotsWrap.innerHTML = '';
+      cfg.steps.forEach((_, i) => {
+        const d = document.createElement('div');
+        d.className = 'dot-step' + (i < state.index ? ' done' : i === state.index ? ' now' : '');
+        dotsWrap.appendChild(d);
+      });
+    }
+    const navlabel = document.getElementById(idOf('navlabel'));
+    if(navlabel) navlabel.textContent = `Langkah ${state.index+1} dari ${cfg.steps.length}`;
+    const prevBtn = document.getElementById(idOf('prev-btn')), nextBtn = document.getElementById(idOf('next-btn'));
+    if(prevBtn) prevBtn.disabled = state.index === 0;
+    if(nextBtn) nextBtn.disabled = !state.completed[state.index];
+  }
+  function renderStep(){
+    renderNavMeta();
+    const container = document.getElementById(idOf('step-container'));
+    container.innerHTML = '';
+    renderInvestigationStep(container, cfg.steps[state.index], eng);
+  }
+  function goto(i){ state.index = Math.max(0, Math.min(cfg.steps.length-1, i)); renderStep(); }
+
+  const eng = {
+    prefix: cfg.prefix,
+    open(){ state.index = 0; state.completed = []; showScreen(cfg.screenId); renderStep(); },
+    next(){ if(state.index+1 >= cfg.steps.length){ if(cfg.onFinish) cfg.onFinish(); else showScreen('screen-materi-hub'); return; } goto(state.index+1); },
+    prev(){ goto(state.index-1); },
+    markComplete(){ state.completed[state.index] = true; renderNavMeta(); },
+    idOf,
+  };
+  const prevBtnEl = document.getElementById(idOf('prev-btn')), nextBtnEl = document.getElementById(idOf('next-btn'));
+  if(prevBtnEl) prevBtnEl.onclick = () => eng.prev();
+  if(nextBtnEl) nextBtnEl.onclick = () => eng.next();
+  return eng;
+}
+
+/* ---------------- Dispatcher jenis langkah (dipakai semua materi) ---------------- */
+function renderInvestigationStep(c, step, eng){
+  const card = document.createElement('div'); card.className = 'm1-card';
+
+  if(step.kind === 'observe-fill'){
+    const u = unsurByProton(step.proton);
+    card.innerHTML = `<div class="m1-eyebrow">Amati</div>
+      <div class="m1-atom-display">${invAtomCard(step.proton, step.neutron, u.nama)}</div>
+      <div class="m1-fillgrid">
+        <div class="m1-fill-item"><label>Proton</label><input type="number" id="${eng.idOf('f-p')}"></div>
+        <div class="m1-fill-item"><label>Neutron</label><input type="number" id="${eng.idOf('f-n')}"></div>
+        <div class="m1-fill-item"><label>Elektron</label><input type="number" id="${eng.idOf('f-e')}"></div>
+      </div>
+      <div class="m1-prompt">${step.prompt}</div>
+      <div class="m1-reflect-box"><textarea placeholder="Tulis dugaanmu di sini (tidak dinilai, cuma untuk membantumu berpikir)…"></textarea></div>
+      <div class="m1-navrow"><button class="btn btn-primary btn-sm" id="${eng.idOf('cek-btn')}">Cek &amp; Tampilkan Penjelasan</button></div>`;
+    c.appendChild(card);
+    document.getElementById(eng.idOf('cek-btn')).onclick = () => {
+      ['p','n','e'].forEach((k,i) => {
+        const el = document.getElementById(eng.idOf('f-'+k));
+        const correct = [step.proton, step.neutron, step.elektron][i];
+        el.style.borderColor = Number(el.value) === correct ? 'var(--hijau)' : 'var(--merah)';
+      });
+      document.getElementById(eng.idOf('cek-btn')).remove();
+      invRevealAndNext(card, step.reveal, eng);
+    };
+    return;
+  }
+
+  if(step.kind === 'table-mc-numeric'){
+    let rowsHtml = step.rows.map(r => `<tr><td>${r.p}</td><td>${r.n}</td><td class="notasi-cell">${notasiHtml(r.p+r.n, r.p, unsurByProton(r.p).lambang)}</td></tr>`).join('');
+    card.innerHTML = `<div class="m1-eyebrow">Cari Pola</div>
+      <table class="m1-table"><thead><tr><th>Proton</th><th>Neutron</th><th>Notasi</th></tr></thead><tbody>${rowsHtml}</tbody></table>`;
+    c.appendChild(card);
+    const mcHost = document.createElement('div');
+    invMiniMC(mcHost, step.mcPrompt, step.mcOptions, step.mcCorrect, () => {
+      const numHost = document.createElement('div'); numHost.style.marginTop = '14px';
+      const inputId = eng.idOf('num-ans'), btnId = eng.idOf('num-btn');
+      numHost.innerHTML = `<div class="m1-prompt">${step.numPrompt}</div>
+        <div class="quiz-numeric"><input type="number" id="${inputId}"><button class="btn btn-primary btn-sm" id="${btnId}">Cek</button></div>`;
+      mcHost.appendChild(numHost);
+      document.getElementById(btnId).onclick = () => {
+        const val = Number(document.getElementById(inputId).value);
+        document.getElementById(inputId).style.borderColor = val === step.numCorrect ? 'var(--hijau)' : 'var(--merah)';
+        document.getElementById(btnId).disabled = true;
+        invRevealAndNext(card, step.reveal, eng);
+      };
+    });
+    card.appendChild(mcHost);
+    return;
+  }
+
+  if(step.kind === 'compare-sequence'){
+    let atomsHtml = `<div class="m1-atom-display">`;
+    atomsHtml += invAtomCard(step.atomA.p, step.atomA.n, step.labelA, step.atomA.e);
+    if(!step.singleAtom) atomsHtml += invAtomCard(step.atomB.p, step.atomB.n, step.labelB, step.atomB.e);
+    atomsHtml += `</div>`;
+    card.innerHTML = `<div class="m1-eyebrow">Bandingkan</div>${atomsHtml}`;
+    c.appendChild(card);
+    const qHost = document.createElement('div');
+    let qi = 0;
+    function askNext(){
+      if(qi >= step.questions.length){ invRevealAndNext(card, step.reveal, eng); return; }
+      const q = step.questions[qi++];
+      invMiniMC(qHost, q.prompt, q.options, q.correct, () => askNext(), !!q.multi);
+    }
+    askNext();
+    card.appendChild(qHost);
+    return;
+  }
+
+  if(step.kind === 'predict-matrix'){
+    const rows = Object.keys(step.matrix);
+    const cols = Object.keys(step.matrix[rows[0]]);
+    let head = '<tr><th>Partikel diubah</th>' + cols.map(cl=>`<th>${cl}</th>`).join('') + '</tr>';
+    let body = rows.map(r => `<tr><td style="font-weight:700;">${r}</td>` + cols.map(cl => `<td><button class="m1-toggle" data-row="${r}" data-col="${cl}">?</button></td>`).join('') + '</tr>').join('');
+    card.innerHTML = `<div class="m1-eyebrow">Bandingkan Pengaruh Tiap Partikel</div><div class="m1-prompt">${step.intro}</div>
+      <table class="m1-matrix"><thead>${head}</thead><tbody>${body}</tbody></table>
+      <div class="m1-navrow"><button class="btn btn-primary btn-sm" id="${eng.idOf('matrix-cek')}">Cek Jawaban</button></div>`;
+    c.appendChild(card);
+    const state = {};
+    card.querySelectorAll('.m1-toggle').forEach(btn => {
+      btn.onclick = () => {
+        const key = btn.dataset.row+'|'+btn.dataset.col;
+        state[key] = state[key] === true ? false : true;
+        btn.textContent = state[key] ? 'Ya' : 'Tidak';
+        btn.classList.toggle('active-ya', state[key]===true);
+        btn.classList.toggle('active-tidak', state[key]===false);
+      };
+    });
+    document.getElementById(eng.idOf('matrix-cek')).onclick = () => {
+      card.querySelectorAll('.m1-toggle').forEach(btn => {
+        const r = btn.dataset.row, cl = btn.dataset.col;
+        const correct = step.matrix[r][cl];
+        const userVal = state[r+'|'+cl];
+        btn.disabled = true;
+        btn.style.outline = (userVal === correct) ? '2px solid var(--hijau)' : '2px solid var(--merah)';
+      });
+      document.getElementById(eng.idOf('matrix-cek')).disabled = true;
+      invRevealAndNext(card, step.revealText || 'Pola lengkap ditemukan.', eng);
+    };
+    return;
+  }
+
+  if(step.kind === 'quickfire-mc'){
+    card.innerHTML = `<div class="m1-eyebrow">${step.title}</div>`;
+    c.appendChild(card);
+    const qHost = document.createElement('div');
+    let qi = 0, benarCount = 0;
+    function askNext(){
+      if(qi >= step.items.length){ invRevealAndNext(card, step.reveal || `Kamu menjawab benar ${benarCount} dari ${step.items.length}.`, eng); return; }
+      const item = step.items[qi++];
+      invMiniMC(qHost, item.prompt, item.options, item.correct, (ok) => { if(ok) benarCount++; askNext(); });
+    }
+    askNext();
+    card.appendChild(qHost);
+    return;
+  }
+
+  if(step.kind === 'read-notation-fill'){
+    const u = unsurByProton(step.proton);
+    const A = step.proton + step.neutron;
+    card.innerHTML = `<div class="m1-eyebrow">Baca Notasi</div>
+      <div class="m1-prompt">${step.intro}</div>
+      <div class="m1-atom-display">${invAtomCard(step.proton, step.neutron, u.nama)}</div>
+      <div class="m1-fillgrid" id="${eng.idOf('notasi-fields')}"></div>
+      <div class="m1-navrow"><button class="btn btn-primary btn-sm" id="${eng.idOf('notasi-cek')}">Cek Jawaban</button></div>`;
+    c.appendChild(card);
+    const fieldsHost = document.getElementById(eng.idOf('notasi-fields'));
+    const labelMap = { proton:'Proton', neutron:'Neutron', elektron:'Elektron (netral)', nomorAtom:'Nomor Atom', nomorMassa:'Nomor Massa' };
+    const correctMap = { proton:step.proton, neutron:step.neutron, elektron:step.proton, nomorAtom:step.proton, nomorMassa:A };
+    step.fields.forEach(f => {
+      const div = document.createElement('div'); div.className = 'm1-fill-item';
+      const fid = eng.idOf('field-'+f);
+      div.innerHTML = `<label>${labelMap[f]}</label><input type="number" id="${fid}">`;
+      fieldsHost.appendChild(div);
+    });
+    document.getElementById(eng.idOf('notasi-cek')).onclick = () => {
+      step.fields.forEach(f => {
+        const el = document.getElementById(eng.idOf('field-'+f));
+        el.style.borderColor = Number(el.value) === correctMap[f] ? 'var(--hijau)' : 'var(--merah)';
+      });
+      document.getElementById(eng.idOf('notasi-cek')).disabled = true;
+      invRevealAndNext(card, step.reveal, eng);
+    };
+    return;
+  }
+
+  if(step.kind === 'capstone'){
+    card.innerHTML = `<div class="m1-eyebrow">${step.title}</div>
+      <div class="m1-prompt">Atom awal: ${invAtomCard(step.baseP, step.baseN, unsurByProton(step.baseP).nama, step.baseE)}</div>
+      <div class="m1-prompt">Pilih SATU partikel yang akan kamu tambah 1 (partikel lain tetap), lalu <b>prediksikan dulu</b> apa saja yang akan berubah sebelum menjalankan animasinya.</div>
+      <div class="quiz-options" id="${eng.idOf('cap-particle')}" style="max-width:320px; margin-bottom:14px;">
+        <button class="quiz-opt-btn" data-part="Proton">+1 Proton</button>
+        <button class="quiz-opt-btn" data-part="Neutron">+1 Neutron</button>
+        <button class="quiz-opt-btn" data-part="Elektron">+1 Elektron</button>
+      </div>
+      <div id="${eng.idOf('cap-predict')}" style="display:none;"></div>
+      <div id="${eng.idOf('cap-result')}" style="margin-top:14px;"></div>`;
+    c.appendChild(card);
+    const aspekList = ['Identitas unsur','Nomor atom','Nomor massa','Muatan'];
+    card.querySelectorAll(`#${eng.idOf('cap-particle')} .quiz-opt-btn`).forEach(btn => {
+      btn.onclick = () => {
+        const chosenPart = btn.dataset.part;
+        card.querySelectorAll(`#${eng.idOf('cap-particle')} .quiz-opt-btn`).forEach(b => { b.classList.remove('correct'); b.disabled = true; });
+        btn.classList.add('correct');
+        const predictHost = document.getElementById(eng.idOf('cap-predict'));
+        predictHost.style.display = 'block';
+        predictHost.innerHTML = `<div class="m1-prompt">Prediksimu: apa saja yang akan berubah jika ${chosenPart.toLowerCase()} ditambah 1?</div>`;
+        invMiniMC(predictHost, '', aspekList, aspekList.filter(a => M1_PREDICT_MATRIX[chosenPart][a]), (benar) => {
+          const newP = step.baseP + (chosenPart==='Proton'?1:0);
+          const newN = step.baseN + (chosenPart==='Neutron'?1:0);
+          const newE = step.baseE + (chosenPart==='Elektron'?1:0);
+          const uBefore = unsurByProton(step.baseP), uAfter = unsurByProton(newP);
+          const resultHost = document.getElementById(eng.idOf('cap-result'));
+          const muatan = newP - newE;
+          resultHost.innerHTML = `<div class="m1-atom-display">
+              ${invAtomCard(step.baseP, step.baseN, 'Sebelum · '+uBefore.nama, step.baseE)}
+              <div class="compare-eq">▶</div>
+              ${invAtomCard(newP, newN, 'Sesudah · '+uAfter.nama+(muatan!==0? ' · muatan '+(muatan>0?'+':'')+muatan : ''), newE)}
+            </div>
+            <div class="m1-prompt">Verifikasi: yang <b>benar-benar berubah</b> adalah <b>${aspekList.filter(a=>M1_PREDICT_MATRIX[chosenPart][a]).join(', ')}</b>. ${benar ? '✓ Prediksimu tepat!' : '✗ Prediksimu belum lengkap/tepat — lihat lagi pola di langkah sebelumnya.'}</div>`;
+          invRevealAndNext(card, step.finalReveal, eng);
+        }, true);
+      };
+    });
+    return;
+  }
+
+  if(step.kind === 'capstone-verify'){
+    card.innerHTML = `<div class="m1-eyebrow">${step.title}</div><div id="${eng.idOf('cv-body')}"></div>`;
+    c.appendChild(card);
+    const body = document.getElementById(eng.idOf('cv-body'));
+    function round(){
+      body.innerHTML = '';
+      const { pair, match } = pickVerifyPair(step.checkKind);
+      const [a, b] = pair;
+      const atomsHtml = `<div class="m1-atom-display">${invAtomCard(a.proton, a.neutron, a.nama+' ('+a.lambang+'-'+a.nomorMassa+')')}${invAtomCard(b.proton, b.neutron, b.nama+' ('+b.lambang+'-'+b.nomorMassa+')')}</div>`;
+      const atomsDiv = document.createElement('div'); atomsDiv.innerHTML = atomsHtml;
+      body.appendChild(atomsDiv);
+      const qHost = document.createElement('div');
+      invMiniMC(qHost, `Apakah kedua atom ini berpasangan ${step.checkLabel}?`, ['Ya','Tidak'], match ? 'Ya' : 'Tidak', () => {
+        const reveal = document.createElement('div'); reveal.className = 'm1-reveal show';
+        reveal.innerHTML = `${a.lambang}-${a.nomorMassa}: Z=${a.proton}, N=${a.neutron} &nbsp;|&nbsp; ${b.lambang}-${b.nomorMassa}: Z=${b.proton}, N=${b.neutron}<br><b>${match ? 'Ya, ini pasangan '+step.checkLabel+'.' : 'Bukan pasangan '+step.checkLabel+'.'}</b>`;
+        qHost.appendChild(reveal);
+        const btnAgain = document.createElement('button'); btnAgain.className = 'btn btn-ghost btn-sm'; btnAgain.style.marginTop = '10px'; btnAgain.textContent = '🔀 Coba pasangan lain';
+        btnAgain.onclick = round;
+        qHost.appendChild(btnAgain);
+        eng.markComplete();
+        const navrow = document.createElement('div'); navrow.className = 'm1-navrow';
+        const btnNext = document.createElement('button'); btnNext.className = 'btn btn-primary'; btnNext.textContent = 'Selesai ▸';
+        btnNext.onclick = () => eng.next();
+        navrow.appendChild(btnNext);
+        qHost.appendChild(navrow);
+      });
+      body.appendChild(qHost);
+    }
+    round();
+    return;
+  }
+}
+
+function pickVerifyPair(kind){
+  const isMatch = Math.random() < 0.5;
+  if(kind === 'isotop'){
+    if(isMatch) return { pair: contohIsotop(), match: true };
+    const a = pickRandom(dataIsotop), b = pickRandom(dataIsotop.filter(d => d.proton !== a.proton));
+    return { pair: [a,b], match: false };
+  }
+  if(kind === 'isobar'){
+    if(isMatch) return { pair: contohIsobar(), match: true };
+    const a = pickRandom(dataIsotop), b = pickRandom(dataIsotop.filter(d => d.nomorMassa !== a.nomorMassa));
+    return { pair: [a,b], match: false };
+  }
+  if(kind === 'isoton'){
+    if(isMatch) return { pair: contohIsoton(), match: true };
+    const a = pickRandom(dataIsotop), b = pickRandom(dataIsotop.filter(d => d.neutron !== a.neutron));
+    return { pair: [a,b], match: false };
+  }
+}
+
+/* ================================================================
+   MATERI 1 — PARTIKEL DASAR & NOTASI ATOM
+   ================================================================ */
 const M1_PREDICT_MATRIX = {
   Proton:  { 'Identitas unsur':true,  'Nomor atom':true,  'Nomor massa':true,  'Muatan':true },
   Neutron: { 'Identitas unsur':false, 'Nomor atom':false, 'Nomor massa':true,  'Muatan':false },
@@ -2292,7 +2643,7 @@ const materi1Steps = [
     reveal:'Angka di <b>atas</b> (12) adalah <b>nomor massa (A)</b> = proton+neutron. Angka di <b>bawah</b> (6) adalah <b>nomor atom (Z)</b> = jumlah proton.' },
 
   { kind:'table-mc-numeric',
-    rows:[{p:6,n:6,label:'C'},{p:7,n:7,label:'N'},{p:8,n:8,label:'O'},{p:11,n:12,label:'Na'}],
+    rows:[{p:6,n:6},{p:7,n:7},{p:8,n:8},{p:11,n:12}],
     mcPrompt:'Bandingkan jumlah proton dengan angka di bagian bawah notasi atom pada tabel. Apa yang kamu temukan?',
     mcOptions:['Selalu sama','Kadang sama','Tidak memiliki hubungan'], mcCorrect:'Selalu sama',
     numPrompt:'Jika suatu atom memiliki 15 proton, berapa angka yang seharusnya berada di bagian bawah notasi atomnya?', numCorrect:15,
@@ -2301,21 +2652,21 @@ const materi1Steps = [
   { kind:'compare-sequence', atomA:{p:6,n:6}, atomB:{p:7,n:6}, labelA:'Atom A', labelB:'Atom B',
     questions:[
       { prompt:'Apakah kedua atom merupakan unsur yang sama?', options:['Ya','Tidak'], correct:'Tidak' },
-      { prompt:'Apa yang berbeda dari kedua atom tersebut?', options:['Jumlah proton','Jumlah neutron','Jumlah elektron','Nomor atom'], correct:'Jumlah proton' },
+      { prompt:'Apa yang berbeda dari kedua atom tersebut? (bisa pilih lebih dari satu)', options:['Jumlah proton','Jumlah neutron','Jumlah elektron','Nomor atom'], correct:['Jumlah proton','Nomor atom'], multi:true },
       { prompt:'Jika jumlah proton suatu atom berubah dari 6 menjadi 7, apakah atom tersebut masih unsur yang sama?', options:['Masih sama','Sudah berbeda'], correct:'Sudah berbeda' },
     ],
-    reveal:'<b>Jumlah proton menentukan identitas suatu unsur.</b> Ini gagasan paling fundamental sebelum membahas nomor massa dan muatan.' },
+    reveal:'<b>Jumlah proton menentukan identitas suatu unsur.</b> Karena nomor atom = jumlah proton, keduanya selalu berubah bersamaan. Ini gagasan paling fundamental sebelum membahas nomor massa dan muatan.' },
 
   { kind:'compare-sequence', atomA:{p:6,n:6}, atomB:{p:6,n:8}, labelA:'Atom A', labelB:'Atom B',
     questions:[
-      { prompt:'Apa yang berubah dari Atom A ke Atom B?', options:['Jumlah proton','Jumlah neutron','Jumlah elektron','Lambang unsur'], correct:'Jumlah neutron' },
+      { prompt:'Apa yang berubah dari Atom A ke Atom B? (bisa pilih lebih dari satu)', options:['Jumlah proton','Jumlah neutron','Jumlah elektron','Nomor massa'], correct:['Jumlah neutron','Nomor massa'], multi:true },
       { prompt:'Apakah kedua atom masih merupakan unsur yang sama?', options:['Ya','Tidak'], correct:'Ya' },
       { prompt:'Apa yang dapat kamu simpulkan dari percobaan ini?', options:['Perubahan neutron mengubah identitas unsur','Perubahan neutron tidak mengubah identitas unsur','Perubahan neutron mengubah nomor atom'], correct:'Perubahan neutron tidak mengubah identitas unsur' },
     ],
-    reveal:'<b>Neutron tidak menentukan identitas unsur.</b> Ini akan sangat penting saat kamu mempelajari <i>isotop</i> nanti.' },
+    reveal:'<b>Neutron tidak menentukan identitas unsur</b> — tapi neutron ikut menentukan <b>nomor massa</b>. Ini akan sangat penting saat kamu mempelajari <i>isotop</i> nanti.' },
 
   { kind:'table-mc-numeric',
-    rows:[{p:6,n:6,label:'C-12'},{p:6,n:8,label:'C-14'},{p:8,n:8,label:'O-16'},{p:11,n:12,label:'Na-23'}], showMassaKolom:true,
+    rows:[{p:6,n:6},{p:6,n:8},{p:8,n:8},{p:11,n:12}],
     mcPrompt:'Coba cari hubungan antara jumlah proton, jumlah neutron, dan angka di bagian atas notasi atom (nomor massa).',
     mcOptions:['Proton + neutron','Proton − neutron','Proton + elektron','Neutron + elektron'], mcCorrect:'Proton + neutron',
     numPrompt:'Jika suatu atom memiliki 13 proton dan 14 neutron, berapakah nomor massanya?', numCorrect:27,
@@ -2333,7 +2684,7 @@ const materi1Steps = [
     ],
     reveal:'Saat <b>proton = elektron</b>, atom bersifat <b>netral</b> — tidak bermuatan.' },
 
-  { kind:'compare-sequence', atomA:{p:11,n:12,e:11}, atomB:{p:11,n:12,e:10}, labelA:'Atom A', labelB:'Atom B', showElektron:true,
+  { kind:'compare-sequence', atomA:{p:11,n:12,e:11}, atomB:{p:11,n:12,e:10}, labelA:'Atom A', labelB:'Atom B',
     questions:[
       { prompt:'Partikel apa yang berubah dari A ke B?', options:['Proton','Neutron','Elektron'], correct:'Elektron' },
       { prompt:'Apakah identitas unsurnya berubah?', options:['Ya','Tidak'], correct:'Tidak' },
@@ -2344,7 +2695,7 @@ const materi1Steps = [
     ],
     reveal:'Elektron yang berkurang membuat atom bermuatan <b>positif</b> (kelebihan proton). Muatan = proton − elektron.' },
 
-  { kind:'compare-sequence', atomA:{p:17,n:18,e:17}, atomB:{p:17,n:18,e:18}, labelA:'Atom A', labelB:'Atom B', showElektron:true,
+  { kind:'compare-sequence', atomA:{p:17,n:18,e:17}, atomB:{p:17,n:18,e:18}, labelA:'Atom A', labelB:'Atom B',
     questions:[
       { prompt:'Apa yang terjadi ketika satu elektron ditambahkan?', options:['Nomor atom bertambah','Nomor massa bertambah','Muatan menjadi lebih positif','Muatan menjadi lebih negatif','Identitas unsur berubah'], correct:'Muatan menjadi lebih negatif' },
     ],
@@ -2352,7 +2703,8 @@ const materi1Steps = [
 
   { kind:'predict-matrix',
     intro:'Amati kembali semua percobaan yang telah kamu lakukan. Jika jumlah satu partikel diubah (partikel lain tetap), tandai apa saja yang ikut berubah.',
-    matrix: M1_PREDICT_MATRIX },
+    matrix: M1_PREDICT_MATRIX,
+    revealText:'Pola lengkap: <b>Proton</b> memengaruhi semuanya. <b>Neutron</b> hanya memengaruhi nomor massa. <b>Elektron</b> hanya memengaruhi muatan.' },
 
   { kind:'quickfire-mc', title:'Menegaskan Pola',
     items:[
@@ -2375,233 +2727,109 @@ const materi1Steps = [
     fields:['proton','neutron','elektron','nomorAtom','nomorMassa'],
     reveal:'Dari satu notasi atom saja, kamu bisa membaca: lambang unsur, nomor atom, nomor massa, jumlah proton, neutron, dan elektron (jika netral).' },
 
-  { kind:'compare-sequence', atomA:{p:17,n:18,e:17}, atomB:{p:17,n:18,e:18}, labelA:'Cl (netral)', labelB:'Cl⁻ (ion)', showElektron:true,
+  { kind:'compare-sequence', atomA:{p:17,n:18,e:17}, atomB:{p:17,n:18,e:18}, labelA:'Cl (netral)', labelB:'Cl⁻ (ion)',
     questions:[
-      { prompt:'Apa yang tetap sama antara Cl netral dan Cl⁻?', options:['Jumlah proton & neutron','Jumlah elektron','Semuanya berbeda'], correct:'Jumlah proton & neutron' },
+      { prompt:'Apa yang tetap sama antara Cl netral dan Cl⁻? (bisa pilih lebih dari satu)', options:['Jumlah proton','Jumlah neutron','Jumlah elektron'], correct:['Jumlah proton','Jumlah neutron'], multi:true },
       { prompt:'Berapa jumlah elektron pada Cl⁻?', options:['16','17','18'], correct:'18' },
     ],
     reveal:'Ion terbentuk saat jumlah elektron berubah sementara proton & neutron tetap — ini jembatan menuju konsep ion secara umum.' },
 
   { kind:'capstone', title:'Uji Pola: Prediksi → Jalankan → Verifikasi',
-    baseP:11, baseN:12, baseE:11 },
+    baseP:11, baseN:12, baseE:11,
+    finalReveal:'Selamat, kamu sudah menyelesaikan Materi 1: Partikel Dasar &amp; Notasi Atom! Lanjut ke Materi 2 untuk mendalami konsep <b>Isotop</b>.' },
 ];
 
-let m1Index = 0;
+/* ================================================================
+   MATERI 2 — ISOTOP (proton sama, neutron berbeda)
+   ================================================================ */
+const materi2Steps = [
+  { kind:'observe-fill', proton:3, neutron:3, elektron:3,
+    prompt:'Ini atom Litium. Hitung partikelnya, lalu tuliskan menurutmu unsur apa ini dan berapa nomor massanya.',
+    reveal:'Ini Litium (Li), Z=3, nomor massa 6 → ditulis Li-6.' },
 
-function m1RenderDots(){
-  const wrap = document.getElementById('m1-dots'); wrap.innerHTML = '';
-  materi1Steps.forEach((_, i) => {
-    const d = document.createElement('div');
-    d.className = 'dot-step' + (i < m1Index ? ' done' : i === m1Index ? ' now' : '');
-    wrap.appendChild(d);
-  });
-  document.getElementById('m1-navlabel').textContent = `Langkah ${m1Index+1} dari ${materi1Steps.length}`;
-}
+  { kind:'compare-sequence', atomA:{p:3,n:3}, atomB:{p:3,n:4}, labelA:'Li-6', labelB:'Li-7',
+    questions:[
+      { prompt:'Apakah kedua atom termasuk unsur yang sama?', options:['Ya','Tidak'], correct:'Ya' },
+      { prompt:'Apa yang membedakan kedua atom ini? (bisa pilih lebih dari satu)', options:['Jumlah proton','Jumlah neutron','Nomor massa'], correct:['Jumlah neutron','Nomor massa'], multi:true },
+    ],
+    reveal:'Atom-atom dengan <b>proton sama</b> tapi <b>neutron berbeda</b> disebut <b>ISOTOP</b>. Li-6 dan Li-7 adalah isotop satu sama lain.' },
 
-function openMateri1(){
-  m1Index = 0;
-  showScreen('screen-materi1');
-  renderM1Step();
-}
-function m1Next(){
-  m1Index++;
-  if(m1Index >= materi1Steps.length){ showScreen('screen-materi-hub'); return; }
-  renderM1Step();
-}
+  { kind:'table-mc-numeric',
+    rows:[{p:1,n:0},{p:1,n:1},{p:1,n:2}],
+    mcPrompt:'Perhatikan tiga isotop Hidrogen ini (H-1, H-2, H-3). Apa yang SELALU SAMA di antara ketiganya?',
+    mcOptions:['Jumlah proton','Jumlah neutron','Nomor massa'], mcCorrect:'Jumlah proton',
+    numPrompt:'Karbon (Z=6) punya isotop dengan 8 neutron. Berapa nomor massa isotop tersebut?', numCorrect:14,
+    reveal:'Isotop selalu punya <b>proton sama</b> — itulah yang menjaga identitas unsurnya tetap sama, walau nomor massanya berbeda-beda.' },
 
-function renderM1Step(){
-  m1RenderDots();
-  const c = document.getElementById('m1-step-container');
-  c.innerHTML = '';
-  const step = materi1Steps[m1Index];
-  const card = document.createElement('div'); card.className = 'm1-card';
+  { kind:'quickfire-mc', title:'Menegaskan Konsep Isotop',
+    items:[
+      { prompt:'Isotop adalah atom-atom yang memiliki…', options:['Proton sama, neutron berbeda','Neutron sama, proton berbeda','Nomor massa sama, proton berbeda'], correct:'Proton sama, neutron berbeda' },
+      { prompt:'Karena isotop dari unsur yang sama punya jumlah elektron (saat netral) yang sama, sifat KIMIA-nya cenderung…', options:['Sangat berbeda','Mirip/serupa','Tidak bisa ditentukan'], correct:'Mirip/serupa' },
+      { prompt:'C-12 dan C-14 termasuk…', options:['Isotop','Isobar','Isoton'], correct:'Isotop' },
+    ] },
 
-  if(step.kind === 'observe-fill'){
-    const u = unsurByProton(step.proton);
-    card.innerHTML = `<div class="m1-eyebrow">Amati</div>
-      <div class="m1-atom-display">${m1AtomCard(step.proton, step.neutron, u.nama)}</div>
-      <div class="m1-fillgrid">
-        <div class="m1-fill-item"><label>Proton</label><input type="number" id="m1-p"></div>
-        <div class="m1-fill-item"><label>Neutron</label><input type="number" id="m1-n"></div>
-        <div class="m1-fill-item"><label>Elektron</label><input type="number" id="m1-e"></div>
-      </div>
-      <div class="m1-prompt">${step.prompt}</div>
-      <div class="m1-reflect-box"><textarea id="m1-reflect" placeholder="Tulis dugaanmu di sini (tidak dinilai, cuma untuk membantumu berpikir)…"></textarea></div>
-      <div class="m1-navrow"><button class="btn btn-primary btn-sm" id="m1-cek-btn">Cek &amp; Tampilkan Penjelasan</button></div>`;
-    c.appendChild(card);
-    document.getElementById('m1-cek-btn').onclick = () => {
-      ['p','n','e'].forEach((k,i) => {
-        const val = Number(document.getElementById('m1-'+k).value);
-        const correct = [step.proton, step.neutron, step.elektron][i];
-        document.getElementById('m1-'+k).style.borderColor = val === correct ? 'var(--hijau)' : 'var(--merah)';
-      });
-      document.getElementById('m1-cek-btn').remove();
-      m1RevealAndNext(card, step.reveal);
-    };
-    return;
-  }
+  { kind:'capstone-verify', title:'Uji Pola: Isotop atau Bukan?', checkKind:'isotop', checkLabel:'ISOTOP' },
+];
 
-  if(step.kind === 'table-mc-numeric'){
-    let rowsHtml = step.rows.map(r => `<tr><td>${r.p}</td><td>${r.n}</td><td class="notasi-cell">${notasiHtml(r.p+r.n, r.p, r.label.split('-')[0])}</td></tr>`).join('');
-    card.innerHTML = `<div class="m1-eyebrow">Cari Pola</div>
-      <table class="m1-table"><thead><tr><th>Proton</th><th>Neutron</th><th>Notasi</th></tr></thead><tbody>${rowsHtml}</tbody></table>`;
-    c.appendChild(card);
-    const mcHost = document.createElement('div');
-    m1MiniMC(mcHost, step.mcPrompt, step.mcOptions, step.mcCorrect, () => {
-      const numHost = document.createElement('div'); numHost.style.marginTop = '14px';
-      numHost.innerHTML = `<div class="m1-prompt">${step.numPrompt}</div>
-        <div class="quiz-numeric"><input type="number" id="m1-num-ans"><button class="btn btn-primary btn-sm" id="m1-num-btn">Cek</button></div>`;
-      mcHost.appendChild(numHost);
-      document.getElementById('m1-num-btn').onclick = () => {
-        const val = Number(document.getElementById('m1-num-ans').value);
-        document.getElementById('m1-num-ans').style.borderColor = val === step.numCorrect ? 'var(--hijau)' : 'var(--merah)';
-        document.getElementById('m1-num-btn').disabled = true;
-        m1RevealAndNext(card, step.reveal);
-      };
-    });
-    card.appendChild(mcHost);
-    return;
-  }
+/* ================================================================
+   MATERI 3 — ISOBAR (nomor massa sama, proton berbeda)
+   ================================================================ */
+const materi3Steps = [
+  { kind:'compare-sequence', atomA:{p:6,n:8}, atomB:{p:7,n:7}, labelA:'C-14', labelB:'N-14',
+    questions:[
+      { prompt:'Apakah kedua atom merupakan unsur yang sama?', options:['Ya','Tidak'], correct:'Tidak' },
+      { prompt:'Apa yang SAMA dari kedua atom ini?', options:['Jumlah proton','Jumlah neutron','Nomor massa'], correct:'Nomor massa' },
+    ],
+    reveal:'Atom <b>berbeda unsur</b> tapi <b>nomor massa sama</b> disebut <b>ISOBAR</b>. C-14 dan N-14 adalah isobar.' },
 
-  if(step.kind === 'compare-sequence'){
-    const showE = !!step.showElektron;
-    let atomsHtml = `<div class="m1-atom-display">`;
-    atomsHtml += m1AtomCard(step.atomA.p, step.atomA.n, step.labelA + (showE || step.atomA.e!==undefined ? ` · e=${step.atomA.e}` : ''));
-    if(!step.singleAtom) atomsHtml += m1AtomCard(step.atomB.p, step.atomB.n, step.labelB + (showE || step.atomB.e!==undefined ? ` · e=${step.atomB.e}` : ''));
-    atomsHtml += `</div>`;
-    card.innerHTML = `<div class="m1-eyebrow">Bandingkan</div>${atomsHtml}`;
-    c.appendChild(card);
-    const qHost = document.createElement('div');
-    let qi = 0;
-    function askNext(){
-      if(qi >= step.questions.length){ m1RevealAndNext(card, step.reveal); return; }
-      const q = step.questions[qi++];
-      m1MiniMC(qHost, q.prompt, q.options, q.correct, () => askNext());
-    }
-    askNext();
-    card.appendChild(qHost);
-    return;
-  }
+  { kind:'table-mc-numeric',
+    rows:[{p:6,n:8},{p:7,n:7},{p:8,n:6}],
+    mcPrompt:'Perhatikan C-14, N-14, dan O-14 pada tabel ini. Apa yang SAMA pada ketiganya?',
+    mcOptions:['Jumlah proton','Jumlah neutron','Nomor massa'], mcCorrect:'Nomor massa',
+    numPrompt:'Jika atom Boron (Z=5) merupakan isobar dari C-14 (nomor massa 14), berapa jumlah neutronnya?', numCorrect:9,
+    reveal:'Isobar punya <b>nomor massa sama</b> meski proton (dan unsurnya) berbeda.' },
 
-  if(step.kind === 'predict-matrix'){
-    const rows = Object.keys(step.matrix);
-    const cols = Object.keys(step.matrix[rows[0]]);
-    let head = '<tr><th>Partikel diubah</th>' + cols.map(c=>`<th>${c}</th>`).join('') + '</tr>';
-    let body = rows.map(r => `<tr><td style="font-weight:700;">${r}</td>` + cols.map(c => `<td><button class="m1-toggle" data-row="${r}" data-col="${c}">?</button></td>`).join('') + '</tr>').join('');
-    card.innerHTML = `<div class="m1-eyebrow">Bandingkan Pengaruh Tiap Partikel</div><div class="m1-prompt">${step.intro}</div>
-      <table class="m1-matrix"><thead>${head}</thead><tbody>${body}</tbody></table>
-      <div class="m1-navrow"><button class="btn btn-primary btn-sm" id="m1-matrix-cek">Cek Jawaban</button></div>`;
-    c.appendChild(card);
-    const state = {};
-    card.querySelectorAll('.m1-toggle').forEach(btn => {
-      btn.onclick = () => {
-        const key = btn.dataset.row+'|'+btn.dataset.col;
-        state[key] = state[key] === true ? false : true;
-        btn.textContent = state[key] ? 'Ya' : 'Tidak';
-        btn.classList.toggle('active-ya', state[key]===true);
-        btn.classList.toggle('active-tidak', state[key]===false);
-      };
-    });
-    document.getElementById('m1-matrix-cek').onclick = () => {
-      card.querySelectorAll('.m1-toggle').forEach(btn => {
-        const r = btn.dataset.row, c2 = btn.dataset.col;
-        const correct = step.matrix[r][c2];
-        const userVal = state[r+'|'+c2];
-        btn.disabled = true;
-        if(userVal === correct) btn.style.outline = '2px solid var(--hijau)';
-        else btn.style.outline = '2px solid var(--merah)';
-      });
-      document.getElementById('m1-matrix-cek').disabled = true;
-      m1RevealAndNext(card, 'Pola lengkap: <b>Proton</b> memengaruhi semuanya. <b>Neutron</b> hanya memengaruhi nomor massa. <b>Elektron</b> hanya memengaruhi muatan.');
-    };
-    return;
-  }
+  { kind:'quickfire-mc', title:'Menegaskan Konsep Isobar',
+    items:[
+      { prompt:'Isobar adalah atom-atom berbeda unsur yang memiliki…', options:['Proton sama','Neutron sama','Nomor massa sama'], correct:'Nomor massa sama' },
+      { prompt:'Dua atom isobar PASTI memiliki…', options:['Jumlah proton sama','Nomor massa sama','Jumlah neutron sama'], correct:'Nomor massa sama' },
+    ] },
 
-  if(step.kind === 'quickfire-mc'){
-    card.innerHTML = `<div class="m1-eyebrow">${step.title}</div>`;
-    c.appendChild(card);
-    const qHost = document.createElement('div');
-    let qi = 0, benarCount = 0;
-    function askNext(){
-      if(qi >= step.items.length){ m1RevealAndNext(card, `Kamu menjawab benar ${benarCount} dari ${step.items.length}.`); return; }
-      const item = step.items[qi++];
-      m1MiniMC(qHost, item.prompt, item.options, item.correct, (ok) => { if(ok) benarCount++; askNext(); });
-    }
-    askNext();
-    card.appendChild(qHost);
-    return;
-  }
+  { kind:'capstone-verify', title:'Uji Pola: Isobar atau Bukan?', checkKind:'isobar', checkLabel:'ISOBAR' },
+];
 
-  if(step.kind === 'read-notation-fill'){
-    const u = unsurByProton(step.proton);
-    const A = step.proton + step.neutron;
-    card.innerHTML = `<div class="m1-eyebrow">Baca Notasi</div>
-      <div class="m1-prompt">${step.intro}</div>
-      <div class="m1-atom-display">${m1AtomCard(step.proton, step.neutron, u.nama)}</div>
-      <div class="m1-fillgrid" id="m1-notasi-fields"></div>
-      <div class="m1-navrow"><button class="btn btn-primary btn-sm" id="m1-notasi-cek">Cek Jawaban</button></div>`;
-    c.appendChild(card);
-    const fieldsHost = document.getElementById('m1-notasi-fields');
-    const labelMap = { proton:'Proton', neutron:'Neutron', elektron:'Elektron (netral)', nomorAtom:'Nomor Atom', nomorMassa:'Nomor Massa' };
-    const correctMap = { proton:step.proton, neutron:step.neutron, elektron:step.proton, nomorAtom:step.proton, nomorMassa:A };
-    step.fields.forEach(f => {
-      const div = document.createElement('div'); div.className = 'm1-fill-item';
-      div.innerHTML = `<label>${labelMap[f]}</label><input type="number" id="m1-field-${f}">`;
-      fieldsHost.appendChild(div);
-    });
-    document.getElementById('m1-notasi-cek').onclick = () => {
-      step.fields.forEach(f => {
-        const el = document.getElementById('m1-field-'+f);
-        el.style.borderColor = Number(el.value) === correctMap[f] ? 'var(--hijau)' : 'var(--merah)';
-      });
-      document.getElementById('m1-notasi-cek').disabled = true;
-      m1RevealAndNext(card, step.reveal);
-    };
-    return;
-  }
+/* ================================================================
+   MATERI 4 — ISOTON (jumlah neutron sama, proton berbeda)
+   ================================================================ */
+const materi4Steps = [
+  { kind:'compare-sequence', atomA:{p:6,n:8}, atomB:{p:8,n:8}, labelA:'C-14', labelB:'O-16',
+    questions:[
+      { prompt:'Apakah kedua atom merupakan unsur yang sama?', options:['Ya','Tidak'], correct:'Tidak' },
+      { prompt:'Apa yang SAMA dari kedua atom ini?', options:['Jumlah proton','Jumlah neutron','Nomor massa'], correct:'Jumlah neutron' },
+    ],
+    reveal:'Atom <b>berbeda unsur</b> tapi <b>jumlah neutron sama</b> disebut <b>ISOTON</b>. C-14 dan O-16 adalah isoton (sama-sama 8 neutron).' },
 
-  if(step.kind === 'capstone'){
-    card.innerHTML = `<div class="m1-eyebrow">${step.title}</div>
-      <div class="m1-prompt">Atom awal: ${m1AtomCard(step.baseP, step.baseN, unsurByProton(step.baseP).nama)}</div>
-      <div class="m1-prompt">Pilih SATU partikel yang akan kamu tambah 1 (partikel lain tetap), lalu <b>prediksikan dulu</b> apa saja yang akan berubah sebelum menjalankan animasinya.</div>
-      <div class="quiz-options" id="m1-cap-particle" style="max-width:320px; margin-bottom:14px;">
-        <button class="quiz-opt-btn" data-part="Proton">+1 Proton</button>
-        <button class="quiz-opt-btn" data-part="Neutron">+1 Neutron</button>
-        <button class="quiz-opt-btn" data-part="Elektron">+1 Elektron</button>
-      </div>
-      <div id="m1-cap-predict" style="display:none;"></div>
-      <div id="m1-cap-result" style="margin-top:14px;"></div>`;
-    c.appendChild(card);
-    const aspekList = ['Identitas unsur','Nomor atom','Nomor massa','Muatan'];
-    let chosenPart = null;
-    card.querySelectorAll('#m1-cap-particle .quiz-opt-btn').forEach(btn => {
-      btn.onclick = () => {
-        chosenPart = btn.dataset.part;
-        card.querySelectorAll('#m1-cap-particle .quiz-opt-btn').forEach(b => { b.classList.remove('correct'); b.disabled = true; });
-        btn.classList.add('correct');
-        const predictHost = document.getElementById('m1-cap-predict');
-        predictHost.style.display = 'block';
-        predictHost.innerHTML = `<div class="m1-prompt">Prediksimu: apa saja yang akan berubah jika ${chosenPart.toLowerCase()} ditambah 1?</div>`;
-        m1MiniMC(predictHost, '', aspekList, aspekList.filter(a => M1_PREDICT_MATRIX[chosenPart][a]), (benar, dipilih) => {
-          const newP = step.baseP + (chosenPart==='Proton'?1:0);
-          const newN = step.baseN + (chosenPart==='Neutron'?1:0);
-          const newE = step.baseE + (chosenPart==='Elektron'?1:0);
-          const uBefore = unsurByProton(step.baseP), uAfter = unsurByProton(newP);
-          const resultHost = document.getElementById('m1-cap-result');
-          const muatan = newP - newE;
-          resultHost.innerHTML = `<div class="m1-atom-display">
-              ${m1AtomCard(step.baseP, step.baseN, 'Sebelum · '+uBefore.nama)}
-              <div class="compare-eq">▶</div>
-              ${m1AtomCard(newP, newN, 'Sesudah · '+uAfter.nama+(muatan!==0? ' · muatan '+(muatan>0?'+':'')+muatan : ''))}
-            </div>
-            <div class="m1-prompt">Verifikasi: yang <b>benar-benar berubah</b> adalah <b>${aspekList.filter(a=>M1_PREDICT_MATRIX[chosenPart][a]).join(', ')}</b>. ${benar ? '✓ Prediksimu tepat!' : '✗ Prediksimu belum lengkap/tepat — lihat lagi pola di langkah sebelumnya.'}</div>`;
-          m1RevealAndNext(card, 'Selamat, kamu sudah menyelesaikan Materi 1: Partikel Dasar &amp; Notasi Atom! Lanjut ke Materi 2 untuk mendalami konsep <b>Isotop</b>.');
-        }, true);
-      };
-    });
-    return;
-  }
-}
+  { kind:'table-mc-numeric',
+    rows:[{p:6,n:8},{p:7,n:8},{p:8,n:8}],
+    mcPrompt:'Perhatikan tiga atom ini (semua neutron=8 tapi unsur beda). Apa yang SAMA pada ketiganya?',
+    mcOptions:['Jumlah proton','Jumlah neutron','Nomor massa'], mcCorrect:'Jumlah neutron',
+    numPrompt:'Atom Boron (Z=5) yang isoton dengan C-14 (neutron=8) punya nomor massa berapa?', numCorrect:13,
+    reveal:'Isoton punya <b>jumlah neutron sama</b> meski proton dan nomor massanya berbeda.' },
+
+  { kind:'quickfire-mc', title:'Menegaskan Konsep Isoton',
+    items:[
+      { prompt:'Isoton adalah atom-atom berbeda unsur dengan…', options:['Proton sama','Jumlah neutron sama','Nomor massa sama'], correct:'Jumlah neutron sama' },
+      { prompt:'Bandingkan ketiganya — isotop sama pada proton, isobar sama pada nomor massa, isoton sama pada…', options:['Proton','Neutron','Elektron'], correct:'Neutron' },
+    ] },
+
+  { kind:'capstone-verify', title:'Uji Pola: Isoton atau Bukan?', checkKind:'isoton', checkLabel:'ISOTON' },
+];
+
+const materi1Engine = createInvestigationEngine({ prefix:'m1', screenId:'screen-materi1', steps: materi1Steps });
+const materi2Engine = createInvestigationEngine({ prefix:'m2', screenId:'screen-materi2', steps: materi2Steps });
+const materi3Engine = createInvestigationEngine({ prefix:'m3', screenId:'screen-materi3', steps: materi3Steps });
+const materi4Engine = createInvestigationEngine({ prefix:'m4', screenId:'screen-materi4', steps: materi4Steps });
+function openMateri1(){ materi1Engine.open(); }
 </script>
 </body>
 </html>
