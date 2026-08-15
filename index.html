@@ -2423,17 +2423,35 @@ function renderInvestigationStep(c, step, eng){
     c.appendChild(card);
     const mcHost = document.createElement('div');
     invMiniMC(mcHost, step.mcPrompt, step.mcOptions, step.mcCorrect, () => {
-      const numHost = document.createElement('div'); numHost.style.marginTop = '14px';
-      const inputId = eng.idOf('num-ans'), btnId = eng.idOf('num-btn');
-      numHost.innerHTML = `<div class="m1-prompt">${step.numPrompt}</div>
-        <div class="quiz-numeric"><input type="number" id="${inputId}"><button class="btn btn-primary btn-sm" id="${btnId}">Cek</button></div>`;
-      mcHost.appendChild(numHost);
-      document.getElementById(btnId).onclick = () => {
-        const val = Number(document.getElementById(inputId).value);
-        document.getElementById(inputId).style.borderColor = val === step.numCorrect ? 'var(--hijau)' : 'var(--merah)';
-        document.getElementById(btnId).disabled = true;
-        invRevealAndNext(card, step.reveal, eng);
-      };
+      const numArea = document.createElement('div'); numArea.style.marginTop = '14px';
+      mcHost.appendChild(numArea);
+      let revealed = false;
+      function renderNumQuestion(prompt, correct){
+        numArea.innerHTML = '';
+        const inputId = eng.idOf('num-ans'), btnId = eng.idOf('num-btn');
+        const box = document.createElement('div');
+        box.innerHTML = `<div class="m1-prompt">${prompt}</div>
+          <div class="quiz-numeric"><input type="number" id="${inputId}"><button class="btn btn-primary btn-sm" id="${btnId}">Cek</button></div>
+          <div id="${eng.idOf('num-fb')}" style="margin-top:6px; font-size:13px; font-weight:700;"></div>`;
+        numArea.appendChild(box);
+        document.getElementById(btnId).onclick = () => {
+          const val = Number(document.getElementById(inputId).value);
+          const ok = val === correct;
+          document.getElementById(inputId).style.borderColor = ok ? 'var(--hijau)' : 'var(--merah)';
+          document.getElementById(btnId).disabled = true;
+          const fb = document.getElementById(eng.idOf('num-fb'));
+          fb.style.color = ok ? 'var(--hijau)' : 'var(--merah)';
+          fb.textContent = ok ? '✓ Benar!' : `✗ Kurang tepat — jawaban yang benar: ${correct}`;
+          if(step.numVariants && step.numVariants.length){
+            const btnLain = document.createElement('button');
+            btnLain.className = 'btn btn-ghost btn-sm'; btnLain.style.marginTop = '8px'; btnLain.textContent = '🔄 Soal Lain';
+            btnLain.onclick = () => { const v = pickRandom(step.numVariants); renderNumQuestion(v.numPrompt, v.numCorrect); };
+            numArea.appendChild(btnLain);
+          }
+          if(!revealed){ revealed = true; invRevealAndNext(card, step.reveal, eng); }
+        };
+      }
+      renderNumQuestion(step.numPrompt, step.numCorrect);
     });
     card.appendChild(mcHost);
     return;
@@ -2507,38 +2525,59 @@ function renderInvestigationStep(c, step, eng){
   }
 
   if(step.kind === 'read-notation-fill'){
-    const u = unsurByProton(step.proton);
-    const A = step.proton + step.neutron;
     card.innerHTML = `<div class="m1-eyebrow">Baca Notasi</div>
       <div class="m1-prompt">${step.intro}</div>
-      <div class="m1-atom-display">${invAtomCard(step.proton, step.neutron, u.nama)}</div>
-      <div class="m1-fillgrid" id="${eng.idOf('notasi-fields')}"></div>
-      <div class="m1-navrow"><button class="btn btn-primary btn-sm" id="${eng.idOf('notasi-cek')}">Cek Jawaban</button></div>`;
+      <div id="${eng.idOf('rn-area')}"></div>`;
     c.appendChild(card);
-    const fieldsHost = document.getElementById(eng.idOf('notasi-fields'));
-    const labelMap = { proton:'Proton', neutron:'Neutron', elektron:'Elektron (netral)', nomorAtom:'Nomor Atom', nomorMassa:'Nomor Massa' };
-    const correctMap = { proton:step.proton, neutron:step.neutron, elektron:step.proton, nomorAtom:step.proton, nomorMassa:A };
-    step.fields.forEach(f => {
-      const div = document.createElement('div'); div.className = 'm1-fill-item';
-      const fid = eng.idOf('field-'+f);
-      div.innerHTML = `<label>${labelMap[f]}</label><input type="number" id="${fid}">`;
-      fieldsHost.appendChild(div);
-    });
-    document.getElementById(eng.idOf('notasi-cek')).onclick = () => {
+    const area = document.getElementById(eng.idOf('rn-area'));
+    let revealed = false;
+
+    function renderRN(proton, neutron){
+      area.innerHTML = '';
+      const u = unsurByProton(proton);
+      const A = proton + neutron;
+      area.innerHTML = `<div class="m1-atom-display">${invAtomCard(proton, neutron, u.nama)}</div>
+        <div class="m1-fillgrid" id="${eng.idOf('notasi-fields')}"></div>
+        <div id="${eng.idOf('rn-fb')}" style="font-size:13px; font-weight:700; margin-top:6px;"></div>
+        <div class="m1-navrow" style="justify-content:flex-start; gap:10px;"><button class="btn btn-primary btn-sm" id="${eng.idOf('notasi-cek')}">Cek Jawaban</button></div>`;
+      const fieldsHost = document.getElementById(eng.idOf('notasi-fields'));
+      const labelMap = { proton:'Proton', neutron:'Neutron', elektron:'Elektron (netral)', nomorAtom:'Nomor Atom', nomorMassa:'Nomor Massa' };
+      const correctMap = { proton, neutron, elektron:proton, nomorAtom:proton, nomorMassa:A };
       step.fields.forEach(f => {
-        const el = document.getElementById(eng.idOf('field-'+f));
-        el.style.borderColor = Number(el.value) === correctMap[f] ? 'var(--hijau)' : 'var(--merah)';
+        const div = document.createElement('div'); div.className = 'm1-fill-item';
+        div.innerHTML = `<label>${labelMap[f]}</label><input type="number" id="${eng.idOf('field-'+f)}">`;
+        fieldsHost.appendChild(div);
       });
-      document.getElementById(eng.idOf('notasi-cek')).disabled = true;
-      invRevealAndNext(card, step.reveal, eng);
-    };
+      document.getElementById(eng.idOf('notasi-cek')).onclick = () => {
+        let semuaBenar = true;
+        step.fields.forEach(f => {
+          const el = document.getElementById(eng.idOf('field-'+f));
+          const ok = Number(el.value) === correctMap[f];
+          if(!ok) semuaBenar = false;
+          el.style.borderColor = ok ? 'var(--hijau)' : 'var(--merah)';
+        });
+        document.getElementById(eng.idOf('notasi-cek')).disabled = true;
+        const fb = document.getElementById(eng.idOf('rn-fb'));
+        fb.style.color = semuaBenar ? 'var(--hijau)' : 'var(--merah)';
+        fb.textContent = semuaBenar ? '✓ Semua jawaban benar!' :
+          '✗ Ada yang belum tepat — jawaban benar: ' + step.fields.map(f => `${labelMap[f]}=${correctMap[f]}`).join(', ');
+        if(step.variantPool && step.variantPool.length){
+          const btnLain = document.createElement('button');
+          btnLain.className = 'btn btn-ghost btn-sm'; btnLain.textContent = '🔄 Soal Lain';
+          btnLain.onclick = () => { const v = pickRandom(step.variantPool); renderRN(v.proton, v.neutron); };
+          document.querySelector('#'+eng.idOf('rn-area')+' .m1-navrow').appendChild(btnLain);
+        }
+        if(!revealed){ revealed = true; invRevealAndNext(card, step.reveal, eng); }
+      };
+    }
+    renderRN(step.proton, step.neutron);
     return;
   }
 
   if(step.kind === 'capstone'){
     card.innerHTML = `<div class="m1-eyebrow">${step.title}</div>
       <div class="m1-prompt">Atom awal: ${invAtomCard(step.baseP, step.baseN, unsurByProton(step.baseP).nama, step.baseE)}</div>
-      <div class="m1-prompt">Pilih SATU partikel yang akan kamu tambah 1 (partikel lain tetap), lalu <b>prediksikan dulu</b> apa saja yang akan berubah sebelum menjalankan animasinya.</div>
+      <div class="m1-prompt">Pilih SATU partikel yang akan kamu tambah 1 (partikel lain tetap), lalu <b>prediksikan dulu</b> apa saja yang akan berubah sebelum menjalankan animasinya. Kamu boleh mencoba ketiga partikel satu per satu.</div>
       <div class="quiz-options" id="${eng.idOf('cap-particle')}" style="max-width:320px; margin-bottom:14px;">
         <button class="quiz-opt-btn" data-part="Proton">+1 Proton</button>
         <button class="quiz-opt-btn" data-part="Neutron">+1 Neutron</button>
@@ -2548,6 +2587,13 @@ function renderInvestigationStep(c, step, eng){
       <div id="${eng.idOf('cap-result')}" style="margin-top:14px;"></div>`;
     c.appendChild(card);
     const aspekList = ['Identitas unsur','Nomor atom','Nomor massa','Muatan'];
+    let revealed = false;
+    function resetParticleButtons(){
+      card.querySelectorAll(`#${eng.idOf('cap-particle')} .quiz-opt-btn`).forEach(b => { b.classList.remove('correct'); b.disabled = false; });
+      document.getElementById(eng.idOf('cap-predict')).style.display = 'none';
+      document.getElementById(eng.idOf('cap-predict')).innerHTML = '';
+      document.getElementById(eng.idOf('cap-result')).innerHTML = '';
+    }
     card.querySelectorAll(`#${eng.idOf('cap-particle')} .quiz-opt-btn`).forEach(btn => {
       btn.onclick = () => {
         const chosenPart = btn.dataset.part;
@@ -2569,7 +2615,11 @@ function renderInvestigationStep(c, step, eng){
               ${invAtomCard(newP, newN, 'Sesudah · '+uAfter.nama+(muatan!==0? ' · muatan '+(muatan>0?'+':'')+muatan : ''), newE)}
             </div>
             <div class="m1-prompt">Verifikasi: yang <b>benar-benar berubah</b> adalah <b>${aspekList.filter(a=>M1_PREDICT_MATRIX[chosenPart][a]).join(', ')}</b>. ${benar ? '✓ Prediksimu tepat!' : '✗ Prediksimu belum lengkap/tepat — lihat lagi pola di langkah sebelumnya.'}</div>`;
-          invRevealAndNext(card, step.finalReveal, eng);
+          const btnLain = document.createElement('button');
+          btnLain.className = 'btn btn-ghost btn-sm'; btnLain.style.marginTop = '10px'; btnLain.textContent = '🔄 Coba Partikel Lain';
+          btnLain.onclick = resetParticleButtons;
+          resultHost.appendChild(btnLain);
+          if(!revealed){ revealed = true; invRevealAndNext(card, step.finalReveal, eng); }
         }, true);
       };
     });
@@ -2649,13 +2699,13 @@ const materi1Steps = [
     numPrompt:'Jika suatu atom memiliki 15 proton, berapa angka yang seharusnya berada di bagian bawah notasi atomnya?', numCorrect:15,
     reveal:'<b>Nomor atom (Z) = jumlah proton.</b> Ini selalu berlaku untuk atom apa pun.' },
 
-  { kind:'compare-sequence', atomA:{p:6,n:6}, atomB:{p:7,n:6}, labelA:'Atom A', labelB:'Atom B',
+  { kind:'compare-sequence', atomA:{p:6,n:6,e:6}, atomB:{p:7,n:6,e:7}, labelA:'Atom A (netral)', labelB:'Atom B (netral)',
     questions:[
       { prompt:'Apakah kedua atom merupakan unsur yang sama?', options:['Ya','Tidak'], correct:'Tidak' },
-      { prompt:'Apa yang berbeda dari kedua atom tersebut? (bisa pilih lebih dari satu)', options:['Jumlah proton','Jumlah neutron','Jumlah elektron','Nomor atom'], correct:['Jumlah proton','Nomor atom'], multi:true },
+      { prompt:'Apa yang berbeda dari kedua atom tersebut? (bisa pilih lebih dari satu)', options:['Jumlah proton','Jumlah neutron','Jumlah elektron','Nomor atom'], correct:['Jumlah proton','Jumlah elektron','Nomor atom'], multi:true },
       { prompt:'Jika jumlah proton suatu atom berubah dari 6 menjadi 7, apakah atom tersebut masih unsur yang sama?', options:['Masih sama','Sudah berbeda'], correct:'Sudah berbeda' },
     ],
-    reveal:'<b>Jumlah proton menentukan identitas suatu unsur.</b> Karena nomor atom = jumlah proton, keduanya selalu berubah bersamaan. Ini gagasan paling fundamental sebelum membahas nomor massa dan muatan.' },
+    reveal:'<b>Jumlah proton menentukan identitas suatu unsur.</b> Karena nomor atom = jumlah proton, keduanya selalu berubah bersamaan. Elektron pun ikut berubah di sini karena kedua atom netral (elektron = proton) — tapi ingat, elektron BUKAN penentu identitas unsur (akan kamu buktikan di langkah berikutnya).' },
 
   { kind:'compare-sequence', atomA:{p:6,n:6}, atomB:{p:6,n:8}, labelA:'Atom A', labelB:'Atom B',
     questions:[
@@ -2675,6 +2725,7 @@ const materi1Steps = [
   { kind:'read-notation-fill', proton:11, neutron:12, elektronNetral:true,
     intro:'Kamu sudah tahu nomor massa = proton + neutron. Atom ini punya nomor massa 23 dan 11 proton.',
     fields:['neutron'],
+    variantPool:[{proton:12,neutron:12},{proton:13,neutron:14},{proton:19,neutron:20},{proton:20,neutron:20},{proton:15,neutron:16}],
     reveal:'<b>Jumlah neutron = nomor massa − nomor atom.</b> 23 − 11 = 12. Rumus ini bukan hafalan — ia muncul langsung dari hubungan yang sudah kamu temukan.' },
 
   { kind:'compare-sequence', atomA:{p:11,n:12,e:11}, atomB:null, labelA:'Atom netral', singleAtom:true,
@@ -2725,6 +2776,7 @@ const materi1Steps = [
   { kind:'read-notation-fill', proton:17, neutron:18, elektronNetral:true,
     intro:'Untuk atom ini, tentukan seluruh informasi yang bisa kamu baca dari notasinya.',
     fields:['proton','neutron','elektron','nomorAtom','nomorMassa'],
+    variantPool:[{proton:11,neutron:12},{proton:13,neutron:14},{proton:19,neutron:20},{proton:20,neutron:20},{proton:16,neutron:16}],
     reveal:'Dari satu notasi atom saja, kamu bisa membaca: lambang unsur, nomor atom, nomor massa, jumlah proton, neutron, dan elektron (jika netral).' },
 
   { kind:'compare-sequence', atomA:{p:17,n:18,e:17}, atomB:{p:17,n:18,e:18}, labelA:'Cl (netral)', labelB:'Cl⁻ (ion)',
@@ -2759,6 +2811,11 @@ const materi2Steps = [
     mcPrompt:'Perhatikan tiga isotop Hidrogen ini (H-1, H-2, H-3). Apa yang SELALU SAMA di antara ketiganya?',
     mcOptions:['Jumlah proton','Jumlah neutron','Nomor massa'], mcCorrect:'Jumlah proton',
     numPrompt:'Karbon (Z=6) punya isotop dengan 8 neutron. Berapa nomor massa isotop tersebut?', numCorrect:14,
+    numVariants:[
+      { numPrompt:'Oksigen (Z=8) punya isotop dengan 10 neutron. Berapa nomor massa isotop tersebut?', numCorrect:18 },
+      { numPrompt:'Neon (Z=10) punya isotop dengan 12 neutron. Berapa nomor massa isotop tersebut?', numCorrect:22 },
+      { numPrompt:'Kalsium (Z=20) punya isotop dengan 22 neutron. Berapa nomor massa isotop tersebut?', numCorrect:42 },
+    ],
     reveal:'Isotop selalu punya <b>proton sama</b> — itulah yang menjaga identitas unsurnya tetap sama, walau nomor massanya berbeda-beda.' },
 
   { kind:'quickfire-mc', title:'Menegaskan Konsep Isotop',
@@ -2787,6 +2844,11 @@ const materi3Steps = [
     mcPrompt:'Perhatikan C-14, N-14, dan O-14 pada tabel ini. Apa yang SAMA pada ketiganya?',
     mcOptions:['Jumlah proton','Jumlah neutron','Nomor massa'], mcCorrect:'Nomor massa',
     numPrompt:'Jika atom Boron (Z=5) merupakan isobar dari C-14 (nomor massa 14), berapa jumlah neutronnya?', numCorrect:9,
+    numVariants:[
+      { numPrompt:'Jika atom Neon (Z=10) merupakan isobar dari Na-23 (nomor massa 23), berapa jumlah neutronnya?', numCorrect:13 },
+      { numPrompt:'Jika atom Magnesium (Z=12) merupakan isobar dari Al-27 (nomor massa 27), berapa jumlah neutronnya?', numCorrect:15 },
+      { numPrompt:'Jika atom Kalium (Z=19) merupakan isobar dari Ca-40 (nomor massa 40), berapa jumlah neutronnya?', numCorrect:21 },
+    ],
     reveal:'Isobar punya <b>nomor massa sama</b> meski proton (dan unsurnya) berbeda.' },
 
   { kind:'quickfire-mc', title:'Menegaskan Konsep Isobar',
@@ -2814,6 +2876,11 @@ const materi4Steps = [
     mcPrompt:'Perhatikan tiga atom ini (semua neutron=8 tapi unsur beda). Apa yang SAMA pada ketiganya?',
     mcOptions:['Jumlah proton','Jumlah neutron','Nomor massa'], mcCorrect:'Jumlah neutron',
     numPrompt:'Atom Boron (Z=5) yang isoton dengan C-14 (neutron=8) punya nomor massa berapa?', numCorrect:13,
+    numVariants:[
+      { numPrompt:'Atom Nitrogen (Z=7) yang isoton dengan O-16 (neutron=8) punya nomor massa berapa?', numCorrect:15 },
+      { numPrompt:'Atom Fluorin (Z=9) yang isoton dengan Ne-22 (neutron=12) punya nomor massa berapa?', numCorrect:21 },
+      { numPrompt:'Atom Natrium (Z=11) yang isoton dengan Mg-24 (neutron=12) punya nomor massa berapa?', numCorrect:23 },
+    ],
     reveal:'Isoton punya <b>jumlah neutron sama</b> meski proton dan nomor massanya berbeda.' },
 
   { kind:'quickfire-mc', title:'Menegaskan Konsep Isoton',
