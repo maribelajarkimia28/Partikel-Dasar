@@ -368,6 +368,11 @@
           <div class="menu-label">Menemukan Pola<br>&amp; Memahami Konsep</div>
           <span class="menu-tag">Tahap 2–3</span>
         </div>
+        <div class="menu-card" onclick="showScreen('screen-berlatih-hub')">
+          <div class="menu-icon">📝</div>
+          <div class="menu-label">Berlatih</div>
+          <span class="menu-tag">Tahap 4</span>
+        </div>
       </div>
       <div class="navbar">
         <span style="font-size:12.5px;color:var(--ink-soft);">Pilih aktivitas untuk mulai</span>
@@ -482,6 +487,54 @@
           <span style="font-size:12px;color:var(--ink-soft);" id="m4-navlabel">Langkah 1</span>
           <button class="btn btn-ghost btn-sm" id="m4-next-btn">Berikutnya ▸</button>
         </div>
+      </div>
+    </div>
+
+    <!-- ===== SCREEN 2g: BERLATIH — pilih materi ===== -->
+    <div class="screen" id="screen-berlatih-hub">
+      <div class="topbar">
+        <div class="brand"><span class="dot"></span>Berlatih</div>
+        <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-menu')">◂ Menu</button>
+      </div>
+      <div class="content" style="display:flex; align-items:center; justify-content:center; gap:20px;">
+        <div class="menu-card" onclick="startBerlatih('partikel')">
+          <div class="menu-icon">⚛️</div>
+          <div class="menu-label">1. Partikel Dasar<br>&amp; Notasi</div>
+        </div>
+        <div class="menu-card" onclick="startBerlatih('isotop')">
+          <div class="menu-icon">🔬</div>
+          <div class="menu-label">2. Isotop</div>
+        </div>
+        <div class="menu-card" onclick="startBerlatih('isobar')">
+          <div class="menu-icon">⚖️</div>
+          <div class="menu-label">3. Isobar</div>
+        </div>
+        <div class="menu-card" onclick="startBerlatih('isoton')">
+          <div class="menu-icon">🧲</div>
+          <div class="menu-label">4. Isoton</div>
+        </div>
+      </div>
+      <div class="navbar">
+        <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-menu')">◂ Kembali</button>
+        <span style="font-size:12px;color:var(--ink-soft);" id="bl-jumlah-info">Jumlah soal mengikuti pengaturan guru</span>
+      </div>
+    </div>
+
+    <!-- ===== SCREEN 2h: BERLATIH — kuis berjalan ===== -->
+    <div class="screen" id="screen-berlatih">
+      <div class="topbar">
+        <div class="brand"><span class="dot"></span>Berlatih</div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <span class="quiz-score-badge" id="bl-score">0/0</span>
+          <div class="progress-dots" id="bl-dots"></div>
+        </div>
+      </div>
+      <div class="content" style="padding:14px 26px; overflow-y:auto;">
+        <div id="bl-question-container" style="max-width:700px; margin:0 auto;"></div>
+      </div>
+      <div class="navbar">
+        <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-berlatih-hub')">◂ Keluar</button>
+        <span style="font-size:12px;color:var(--ink-soft);" id="bl-navlabel">Soal 1</span>
       </div>
     </div>
 
@@ -2287,6 +2340,18 @@ function invAtomCard(p, n, ket, e){
   const ketFinal = (ket ? ket + ' · ' : u.nama + ' · ') + `p=${p}, n=${n}` + (e!==undefined ? `, e=${e}` : '');
   return `<div class="m1-atom-card"><div class="notasi">${notasiHtml(p+n, p, u.lambang)}</div><div class="ket">${ketFinal}</div></div>`;
 }
+// Kartu tanpa auto p=/n= — ketText dikendalikan penuh oleh pemanggil (mencegah bocor jawaban)
+function invAtomCardCustom(p, n, ketText){
+  const u = unsurByProton(p);
+  return `<div class="m1-atom-card"><div class="notasi">${notasiHtml(p+n, p, u.lambang)}</div>${ketText ? `<div class="ket">${ketText}</div>` : ''}</div>`;
+}
+// Ket minimal untuk read-notation-fill: hanya tampilkan p/n yang TIDAK sedang ditanyakan di fields
+function minimalCaption(proton, neutron, fields, nama){
+  const parts = [nama];
+  if(!fields.includes('proton')) parts.push('p='+proton);
+  if(!fields.includes('neutron')) parts.push('n='+neutron);
+  return parts.join(' · ');
+}
 
 function invMiniMC(container, prompt, options, correct, onAnswered, multi){
   const wrap = document.createElement('div'); wrap.style.marginBottom = '14px';
@@ -2347,6 +2412,7 @@ function invRevealAndNext(container, revealText, eng){
 function createInvestigationEngine(cfg){
   // cfg: { prefix (untuk id DOM, mis. 'm1'), screenId (mis. 'screen-materi1'), steps, onFinish }
   const state = { index: 0, completed: [] };
+  const htmlCache = {}; // menyimpan tampilan langkah yang SUDAH selesai dijawab
   const idOf = (name) => cfg.prefix + '-' + name;
 
   function renderNavMeta(){
@@ -2368,14 +2434,23 @@ function createInvestigationEngine(cfg){
   function renderStep(){
     renderNavMeta();
     const container = document.getElementById(idOf('step-container'));
-    container.innerHTML = '';
-    renderInvestigationStep(container, cfg.steps[state.index], eng);
+    if(state.completed[state.index] && htmlCache[state.index] !== undefined){
+      container.innerHTML = htmlCache[state.index]; // pulihkan, jangan render ulang dari nol
+    } else {
+      container.innerHTML = '';
+      renderInvestigationStep(container, cfg.steps[state.index], eng);
+    }
   }
-  function goto(i){ state.index = Math.max(0, Math.min(cfg.steps.length-1, i)); renderStep(); }
+  function goto(i){
+    const container = document.getElementById(idOf('step-container'));
+    if(container && state.completed[state.index]) htmlCache[state.index] = container.innerHTML;
+    state.index = Math.max(0, Math.min(cfg.steps.length-1, i));
+    renderStep();
+  }
 
   const eng = {
     prefix: cfg.prefix,
-    open(){ state.index = 0; state.completed = []; showScreen(cfg.screenId); renderStep(); },
+    open(){ state.index = 0; state.completed = []; Object.keys(htmlCache).forEach(k=>delete htmlCache[k]); showScreen(cfg.screenId); renderStep(); },
     next(){ if(state.index+1 >= cfg.steps.length){ if(cfg.onFinish) cfg.onFinish(); else showScreen('screen-materi-hub'); return; } goto(state.index+1); },
     prev(){ goto(state.index-1); },
     markComplete(){ state.completed[state.index] = true; renderNavMeta(); },
@@ -2393,8 +2468,9 @@ function renderInvestigationStep(c, step, eng){
 
   if(step.kind === 'observe-fill'){
     const u = unsurByProton(step.proton);
+    const kartu = step.showKet===false ? invAtomCardCustom(step.proton, step.neutron, '') : invAtomCard(step.proton, step.neutron, u.nama);
     card.innerHTML = `<div class="m1-eyebrow">Amati</div>
-      <div class="m1-atom-display">${invAtomCard(step.proton, step.neutron, u.nama)}</div>
+      <div class="m1-atom-display">${kartu}</div>
       <div class="m1-fillgrid">
         <div class="m1-fill-item"><label>Proton</label><input type="number" id="${eng.idOf('f-p')}"></div>
         <div class="m1-fill-item"><label>Neutron</label><input type="number" id="${eng.idOf('f-n')}"></div>
@@ -2526,17 +2602,22 @@ function renderInvestigationStep(c, step, eng){
 
   if(step.kind === 'read-notation-fill'){
     card.innerHTML = `<div class="m1-eyebrow">Baca Notasi</div>
-      <div class="m1-prompt">${step.intro}</div>
+      <div class="m1-prompt" id="${eng.idOf('rn-intro')}"></div>
       <div id="${eng.idOf('rn-area')}"></div>`;
     c.appendChild(card);
     const area = document.getElementById(eng.idOf('rn-area'));
     let revealed = false;
 
-    function renderRN(proton, neutron){
-      area.innerHTML = '';
+    function renderRN(proton, neutron, isFirst){
       const u = unsurByProton(proton);
       const A = proton + neutron;
-      area.innerHTML = `<div class="m1-atom-display">${invAtomCard(proton, neutron, u.nama)}</div>
+      document.getElementById(eng.idOf('rn-intro')).innerHTML =
+        step.introFn ? step.introFn(proton, neutron) : step.intro;
+      area.innerHTML = '';
+      const kartu = isFirst
+        ? invAtomCard(proton, neutron, u.nama)
+        : invAtomCardCustom(proton, neutron, minimalCaption(proton, neutron, step.fields, u.nama));
+      area.innerHTML = `<div class="m1-atom-display">${kartu}</div>
         <div class="m1-fillgrid" id="${eng.idOf('notasi-fields')}"></div>
         <div id="${eng.idOf('rn-fb')}" style="font-size:13px; font-weight:700; margin-top:6px;"></div>
         <div class="m1-navrow" style="justify-content:flex-start; gap:10px;"><button class="btn btn-primary btn-sm" id="${eng.idOf('notasi-cek')}">Cek Jawaban</button></div>`;
@@ -2564,13 +2645,13 @@ function renderInvestigationStep(c, step, eng){
         if(step.variantPool && step.variantPool.length){
           const btnLain = document.createElement('button');
           btnLain.className = 'btn btn-ghost btn-sm'; btnLain.textContent = '🔄 Soal Lain';
-          btnLain.onclick = () => { const v = pickRandom(step.variantPool); renderRN(v.proton, v.neutron); };
+          btnLain.onclick = () => { const v = pickRandom(step.variantPool); renderRN(v.proton, v.neutron, false); };
           document.querySelector('#'+eng.idOf('rn-area')+' .m1-navrow').appendChild(btnLain);
         }
         if(!revealed){ revealed = true; invRevealAndNext(card, step.reveal, eng); }
       };
     }
-    renderRN(step.proton, step.neutron);
+    renderRN(step.proton, step.neutron, true);
     return;
   }
 
@@ -2630,11 +2711,17 @@ function renderInvestigationStep(c, step, eng){
     card.innerHTML = `<div class="m1-eyebrow">${step.title}</div><div id="${eng.idOf('cv-body')}"></div>`;
     c.appendChild(card);
     const body = document.getElementById(eng.idOf('cv-body'));
+    let isFirstRound = true;
     function round(){
       body.innerHTML = '';
       const { pair, match } = pickVerifyPair(step.checkKind);
       const [a, b] = pair;
-      const atomsHtml = `<div class="m1-atom-display">${invAtomCard(a.proton, a.neutron, a.nama+' ('+a.lambang+'-'+a.nomorMassa+')')}${invAtomCard(b.proton, b.neutron, b.nama+' ('+b.lambang+'-'+b.nomorMassa+')')}</div>`;
+      const cardA = isFirstRound ? invAtomCard(a.proton, a.neutron, a.nama+' ('+a.lambang+'-'+a.nomorMassa+')')
+                                  : invAtomCardCustom(a.proton, a.neutron, a.nama);
+      const cardB = isFirstRound ? invAtomCard(b.proton, b.neutron, b.nama+' ('+b.lambang+'-'+b.nomorMassa+')')
+                                  : invAtomCardCustom(b.proton, b.neutron, b.nama);
+      isFirstRound = false;
+      const atomsHtml = `<div class="m1-atom-display">${cardA}${cardB}</div>`;
       const atomsDiv = document.createElement('div'); atomsDiv.innerHTML = atomsHtml;
       body.appendChild(atomsDiv);
       const qHost = document.createElement('div');
@@ -2724,6 +2811,7 @@ const materi1Steps = [
 
   { kind:'read-notation-fill', proton:11, neutron:12, elektronNetral:true,
     intro:'Kamu sudah tahu nomor massa = proton + neutron. Atom ini punya nomor massa 23 dan 11 proton.',
+    introFn:(p,n) => `Kamu sudah tahu nomor massa = proton + neutron. Atom ini punya nomor massa ${p+n} dan ${p} proton.`,
     fields:['neutron'],
     variantPool:[{proton:12,neutron:12},{proton:13,neutron:14},{proton:19,neutron:20},{proton:20,neutron:20},{proton:15,neutron:16}],
     reveal:'<b>Jumlah neutron = nomor massa − nomor atom.</b> 23 − 11 = 12. Rumus ini bukan hafalan — ia muncul langsung dari hubungan yang sudah kamu temukan.' },
@@ -2795,7 +2883,7 @@ const materi1Steps = [
    MATERI 2 — ISOTOP (proton sama, neutron berbeda)
    ================================================================ */
 const materi2Steps = [
-  { kind:'observe-fill', proton:3, neutron:3, elektron:3,
+  { kind:'observe-fill', proton:3, neutron:3, elektron:3, showKet:false,
     prompt:'Ini atom Litium. Hitung partikelnya, lalu tuliskan menurutmu unsur apa ini dan berapa nomor massanya.',
     reveal:'Ini Litium (Li), Z=3, nomor massa 6 → ditulis Li-6.' },
 
@@ -2897,6 +2985,135 @@ const materi2Engine = createInvestigationEngine({ prefix:'m2', screenId:'screen-
 const materi3Engine = createInvestigationEngine({ prefix:'m3', screenId:'screen-materi3', steps: materi3Steps });
 const materi4Engine = createInvestigationEngine({ prefix:'m4', screenId:'screen-materi4', steps: materi4Steps });
 function openMateri1(){ materi1Engine.open(); }
+/* ================================================================
+   BERLATIH — soal campuran (generik + spesifik) per materi
+   Jumlah soal diambil dari SETTINGS.kuis_jumlah_soal (guru bisa atur)
+   ================================================================ */
+let appSettings = {};
+async function loadAppSettings(){
+  try{
+    const data = await apiGet('publicData');
+    appSettings = data.settings || {};
+    const n = Number(appSettings.kuis_jumlah_soal) || 5;
+    const info = document.getElementById('bl-jumlah-info');
+    if(info) info.textContent = `${n} soal per materi (diatur guru lewat SETTINGS)`;
+  } catch(err){ /* diam-diam pakai default 5 kalau gagal */ }
+}
+loadAppSettings();
+
+const BERLATIH_LABEL = { isotop:'ISOTOP', isobar:'ISOBAR', isoton:'ISOTON' };
+let berlatihMateri = null, berlatihQuestions = [], berlatihIndex = 0, berlatihStartTime = null;
+const berlatihScore = { total: 0, benar: 0 };
+
+function generateBerlatihQuestions(materiKey, n){
+  const qs = [];
+  for(let i=0;i<n;i++){
+    if(materiKey === 'partikel') qs.push({ kind:'concept' });
+    else qs.push(i % 2 === 0 ? { kind:'verify', checkKind: materiKey } : { kind:'concept' });
+  }
+  return shuffleArr(qs);
+}
+
+function startBerlatih(materiKey){
+  berlatihMateri = materiKey;
+  const n = Number(appSettings.kuis_jumlah_soal) || 5;
+  berlatihQuestions = generateBerlatihQuestions(materiKey, n);
+  berlatihIndex = 0;
+  berlatihScore.total = 0; berlatihScore.benar = 0;
+  berlatihStartTime = performance.now();
+  showScreen('screen-berlatih');
+  renderBerlatihDots();
+  renderBerlatihQuestion();
+}
+
+function renderBerlatihDots(){
+  const wrap = document.getElementById('bl-dots'); wrap.innerHTML = '';
+  berlatihQuestions.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot-step' + (i < berlatihIndex ? ' done' : i === berlatihIndex ? ' now' : '');
+    wrap.appendChild(d);
+  });
+  document.getElementById('bl-navlabel').textContent = `Soal ${berlatihIndex+1} dari ${berlatihQuestions.length}`;
+  document.getElementById('bl-score').textContent = `${berlatihScore.benar}/${berlatihScore.total}`;
+}
+
+function renderBerlatihQuestion(){
+  renderBerlatihDots();
+  const container = document.getElementById('bl-question-container');
+  container.innerHTML = '';
+  const spec = berlatihQuestions[berlatihIndex];
+  const card = document.createElement('div'); card.className = 'm1-card';
+
+  if(spec.kind === 'concept'){
+    const atom = pickRandom(dataIsotop);
+    const netral = { elektron: atom.proton };
+    const bank = buildQuestionBank(atom, netral);
+    const concept = pickRandom(ALL_QUIZ_CONCEPTS.filter(k => bank[k]));
+    const format = pickRandom(Object.keys(bank[concept]));
+    const q = bank[concept][format]();
+    card.innerHTML = `<div class="m1-eyebrow">Soal ${berlatihIndex+1} dari ${berlatihQuestions.length}</div>
+      <div class="m1-atom-display">${invAtomCard(atom.proton, atom.neutron, atom.nama)}</div>
+      <div id="bl-quiz-body"></div>`;
+    container.appendChild(card);
+    renderQuestion('bl', q, (isCorrect) => finishBerlatihQuestion(isCorrect));
+  } else {
+    const { pair, match } = pickVerifyPair(spec.checkKind);
+    const [a, b] = pair;
+    const label = BERLATIH_LABEL[spec.checkKind];
+    card.innerHTML = `<div class="m1-eyebrow">Soal ${berlatihIndex+1} dari ${berlatihQuestions.length}</div>
+      <div class="m1-atom-display">${invAtomCard(a.proton, a.neutron, a.nama+' ('+a.lambang+'-'+a.nomorMassa+')')}${invAtomCard(b.proton, b.neutron, b.nama+' ('+b.lambang+'-'+b.nomorMassa+')')}</div>
+      <div id="bl-verify-body"></div>`;
+    container.appendChild(card);
+    invMiniMC(document.getElementById('bl-verify-body'), `Apakah kedua atom ini berpasangan ${label}?`, ['Ya','Tidak'], match ? 'Ya' : 'Tidak',
+      (isCorrect) => finishBerlatihQuestion(isCorrect));
+  }
+}
+
+function finishBerlatihQuestion(isCorrect){
+  berlatihScore.total++; if(isCorrect) berlatihScore.benar++;
+  document.getElementById('bl-score').textContent = `${berlatihScore.benar}/${berlatihScore.total}`;
+  const container = document.getElementById('bl-question-container');
+  const navrow = document.createElement('div'); navrow.className = 'm1-navrow';
+  const btn = document.createElement('button'); btn.className = 'btn btn-primary';
+  btn.textContent = (berlatihIndex+1 >= berlatihQuestions.length) ? 'Lihat Hasil ▸' : 'Soal Berikutnya ▸';
+  btn.onclick = () => {
+    berlatihIndex++;
+    if(berlatihIndex >= berlatihQuestions.length) showBerlatihResult();
+    else renderBerlatihQuestion();
+  };
+  navrow.appendChild(btn);
+  container.appendChild(navrow);
+}
+
+function showBerlatihResult(){
+  renderBerlatihDots();
+  const container = document.getElementById('bl-question-container');
+  container.innerHTML = `<div class="m1-card" style="text-align:center;">
+    <div class="m1-eyebrow">Selesai!</div>
+    <div style="font-family:'Baloo 2'; font-size:44px; font-weight:800; color:var(--primary-dark); margin:16px 0;">${berlatihScore.benar} / ${berlatihScore.total}</div>
+    <div id="bl-save-status" style="font-size:13px; color:var(--ink-soft); font-weight:600; margin-bottom:14px;"></div>
+    <button class="btn btn-primary" id="bl-save-btn" style="background:var(--accent); box-shadow:0 6px 18px rgba(242,153,74,0.45);" onclick="saveBerlatihScore()">💾 Simpan Skor</button>
+  </div>`;
+}
+
+async function saveBerlatihScore(){
+  const statusEl = document.getElementById('bl-save-status');
+  const btn = document.getElementById('bl-save-btn');
+  if(!currentUser){ statusEl.textContent = 'Masuk sebagai tamu — skor tidak disimpan ke server.'; return; }
+  const waktu = Math.max(1, Math.round((performance.now() - berlatihStartTime) / 1000));
+  statusEl.textContent = 'Menyimpan…';
+  btn.disabled = true;
+  try{
+    await apiPost('saveLatihanIndividu', {
+      kelas: currentUser.kelas, nama: currentUser.nama, materi: 'berlatih-'+berlatihMateri,
+      totalSoal: berlatihScore.total, totalBenar: berlatihScore.benar, waktu
+    });
+    statusEl.textContent = '✓ Tersimpan ke Google Sheet.';
+  } catch(err){
+    statusEl.textContent = '⚠ Gagal menyimpan: ' + err.message;
+    btn.disabled = false;
+  }
+}
 </script>
 </body>
 </html>
