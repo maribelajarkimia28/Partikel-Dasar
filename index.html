@@ -3050,21 +3050,18 @@ function relasiPatternRender(checkKind){
 
 function relasiComputeRender(checkKind){
   return (container, onAnswered) => {
-    const base = pickRandom(dataIsotop);
+    const pickPairFn = { isotop: contohIsotop, isobar: contohIsobar, isoton: contohIsoton }[checkKind];
+    const [a, b] = pickPairFn(); // pasangan diambil LANGSUNG dari dataIsotop — dijamin nyata ada di data
     let prompt, correct;
     if(checkKind === 'isotop'){
-      const targetN = Math.max(0, base.neutron + (Math.random()<0.5?1:-1)*(1+Math.floor(Math.random()*2)));
-      prompt = `${base.nama} (Z=${base.proton}) punya isotop dengan ${targetN} neutron. Berapa nomor massa isotop tersebut?`;
-      correct = base.proton + targetN;
+      prompt = `${a.nama} (Z=${a.proton}) punya isotop dengan ${b.neutron} neutron. Berapa nomor massa isotop tersebut?`;
+      correct = b.nomorMassa;
     } else if(checkKind === 'isobar'){
-      const pilihan = availableProtons.filter(z => z !== base.proton && z <= base.nomorMassa);
-      const otherZ = pickRandom(pilihan);
-      prompt = `Jika atom ${unsurByProton(otherZ).nama} (Z=${otherZ}) merupakan isobar dari ${base.lambang}-${base.nomorMassa} (nomor massa ${base.nomorMassa}), berapa jumlah neutronnya?`;
-      correct = base.nomorMassa - otherZ;
+      prompt = `Jika atom ${b.nama} (Z=${b.proton}) merupakan isobar dari ${a.lambang}-${a.nomorMassa} (nomor massa ${a.nomorMassa}), berapa jumlah neutronnya?`;
+      correct = b.neutron;
     } else {
-      const otherZ = pickRandom(availableProtons.filter(z => z !== base.proton));
-      prompt = `Atom ${unsurByProton(otherZ).nama} (Z=${otherZ}) yang isoton dengan ${base.lambang}-${base.nomorMassa} (neutron=${base.neutron}) punya nomor massa berapa?`;
-      correct = otherZ + base.neutron;
+      prompt = `Atom ${b.nama} (Z=${b.proton}) yang isoton dengan ${a.lambang}-${a.nomorMassa} (neutron=${a.neutron}) punya nomor massa berapa?`;
+      correct = b.nomorMassa;
     }
     const wrap = document.createElement('div');
     wrap.innerHTML = `<div class="m1-prompt">${prompt}</div>
