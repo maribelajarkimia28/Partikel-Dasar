@@ -2961,7 +2961,7 @@ const materi4Steps = [
 
   { kind:'table-mc-numeric',
     rows:[{p:6,n:8},{p:7,n:8},{p:8,n:8}],
-    mcPrompt:'Perhatikan tiga atom ini (semua neutron=8 tapi unsur beda). Apa yang SAMA pada ketiganya?',
+    mcPrompt:'Perhatikan tiga atom ini. Apa yang SAMA pada ketiganya?',
     mcOptions:['Jumlah proton','Jumlah neutron','Nomor massa'], mcCorrect:'Jumlah neutron',
     numPrompt:'Atom Boron (Z=5) yang isoton dengan C-14 (neutron=8) punya nomor massa berapa?', numCorrect:13,
     numVariants:[
@@ -3005,13 +3005,96 @@ const BERLATIH_LABEL = { isotop:'ISOTOP', isobar:'ISOBAR', isoton:'ISOTON' };
 let berlatihMateri = null, berlatihQuestions = [], berlatihIndex = 0, berlatihStartTime = null;
 const berlatihScore = { total: 0, benar: 0 };
 
+/* ---------------- Bank soal RELASI khusus (isotop/isobar/isoton) ---------------- */
+const RELASI_SAME_KEY = { isotop:'proton', isobar:'nomorMassa', isoton:'neutron' };
+const RELASI_SAME_LABEL = { proton:'Jumlah proton', nomorMassa:'Nomor massa', neutron:'Jumlah neutron' };
+
+function relasiVerifyRender(checkKind){
+  return (container, onAnswered) => {
+    const { pair, match } = pickVerifyPair(checkKind);
+    const [a, b] = pair;
+    const label = BERLATIH_LABEL[checkKind];
+    const wrap = document.createElement('div');
+    wrap.innerHTML = `<div class="m1-atom-display">${invAtomCardCustom(a.proton, a.neutron, '')}${invAtomCardCustom(b.proton, b.neutron, '')}</div>`;
+    container.appendChild(wrap);
+    const qHost = document.createElement('div'); qHost.style.marginTop = '10px';
+    invMiniMC(qHost, `Apakah kedua atom ini berpasangan ${label}?`, ['Ya','Tidak'], match ? 'Ya' : 'Tidak', onAnswered);
+    container.appendChild(qHost);
+  };
+}
+
+function relasiPatternRender(checkKind){
+  return (container, onAnswered) => {
+    const key = RELASI_SAME_KEY[checkKind];
+    const groups = {};
+    dataIsotop.forEach(d => { (groups[d[key]] = groups[d[key]] || []).push(d); });
+    let rows;
+    if(checkKind === 'isotop'){
+      const kandidat = Object.values(groups).filter(g => g.length >= 3);
+      rows = shuffleArr(pickRandom(kandidat)).slice(0,3);
+    } else {
+      const kandidat = Object.values(groups).filter(g => new Set(g.map(x=>x.proton)).size >= 3);
+      const grup = pickRandom(kandidat);
+      const satuPerProton = Object.values(grup.reduce((acc,d)=>{ acc[d.proton]=d; return acc; },{}));
+      rows = shuffleArr(satuPerProton).slice(0,3);
+    }
+    const rowsHtml = rows.map(r => `<tr><td>${r.proton}</td><td>${r.neutron}</td><td class="notasi-cell">${notasiHtml(r.nomorMassa, r.proton, r.lambang)}</td></tr>`).join('');
+    const wrap = document.createElement('div');
+    wrap.innerHTML = `<table class="m1-table"><thead><tr><th>Proton</th><th>Neutron</th><th>Notasi</th></tr></thead><tbody>${rowsHtml}</tbody></table>`;
+    container.appendChild(wrap);
+    const qHost = document.createElement('div'); qHost.style.marginTop = '14px';
+    invMiniMC(qHost, 'Apa yang SAMA pada ketiga atom di atas?', shuffleArr(['Jumlah proton','Jumlah neutron','Nomor massa']), RELASI_SAME_LABEL[key], onAnswered);
+    container.appendChild(qHost);
+  };
+}
+
+function relasiComputeRender(checkKind){
+  return (container, onAnswered) => {
+    const base = pickRandom(dataIsotop);
+    let prompt, correct;
+    if(checkKind === 'isotop'){
+      const targetN = Math.max(0, base.neutron + (Math.random()<0.5?1:-1)*(1+Math.floor(Math.random()*2)));
+      prompt = `${base.nama} (Z=${base.proton}) punya isotop dengan ${targetN} neutron. Berapa nomor massa isotop tersebut?`;
+      correct = base.proton + targetN;
+    } else if(checkKind === 'isobar'){
+      const pilihan = availableProtons.filter(z => z !== base.proton && z <= base.nomorMassa);
+      const otherZ = pickRandom(pilihan);
+      prompt = `Jika atom ${unsurByProton(otherZ).nama} (Z=${otherZ}) merupakan isobar dari ${base.lambang}-${base.nomorMassa} (nomor massa ${base.nomorMassa}), berapa jumlah neutronnya?`;
+      correct = base.nomorMassa - otherZ;
+    } else {
+      const otherZ = pickRandom(availableProtons.filter(z => z !== base.proton));
+      prompt = `Atom ${unsurByProton(otherZ).nama} (Z=${otherZ}) yang isoton dengan ${base.lambang}-${base.nomorMassa} (neutron=${base.neutron}) punya nomor massa berapa?`;
+      correct = otherZ + base.neutron;
+    }
+    const wrap = document.createElement('div');
+    wrap.innerHTML = `<div class="m1-prompt">${prompt}</div>
+      <div class="quiz-numeric"><input type="number" id="bl-relasi-num"><button class="btn btn-primary btn-sm" id="bl-relasi-btn">Cek</button></div>
+      <div id="bl-relasi-fb" style="margin-top:6px; font-size:13px; font-weight:700;"></div>`;
+    container.appendChild(wrap);
+    document.getElementById('bl-relasi-btn').onclick = () => {
+      const val = Number(document.getElementById('bl-relasi-num').value);
+      const ok = val === correct;
+      document.getElementById('bl-relasi-num').style.borderColor = ok ? 'var(--hijau)' : 'var(--merah)';
+      document.getElementById('bl-relasi-btn').disabled = true;
+      const fb = document.getElementById('bl-relasi-fb');
+      fb.style.color = ok ? 'var(--hijau)' : 'var(--merah)';
+      fb.textContent = ok ? '✓ Benar!' : `✗ Kurang tepat — jawaban benar: ${correct}`;
+      onAnswered(ok);
+    };
+  };
+}
+
 function generateBerlatihQuestions(materiKey, n){
-  const qs = [];
-  for(let i=0;i<n;i++){
-    if(materiKey === 'partikel') qs.push({ kind:'concept' });
-    else qs.push(i % 2 === 0 ? { kind:'verify', checkKind: materiKey } : { kind:'concept' });
+  if(materiKey === 'partikel'){
+    const qs = [];
+    for(let i=0;i<n;i++) qs.push({ kind:'concept' });
+    return shuffleArr(qs);
   }
-  return shuffleArr(qs);
+  // Materi 2-4: HANYA soal terkait relasi (verify/pattern/compute), didistribusikan merata bergiliran
+  const aspekUrutan = shuffleArr(['verify','pattern','compute']);
+  const qs = [];
+  for(let i=0;i<n;i++) qs.push({ kind:'relasi', checkKind: materiKey, aspek: aspekUrutan[i % aspekUrutan.length] });
+  return qs;
 }
 
 function startBerlatih(materiKey){
@@ -3043,6 +3126,9 @@ function renderBerlatihQuestion(){
   container.innerHTML = '';
   const spec = berlatihQuestions[berlatihIndex];
   const card = document.createElement('div'); card.className = 'm1-card';
+  card.innerHTML = `<div class="m1-eyebrow">Soal ${berlatihIndex+1} dari ${berlatihQuestions.length}</div><div id="bl-inner"></div>`;
+  container.appendChild(card);
+  const inner = document.getElementById('bl-inner');
 
   if(spec.kind === 'concept'){
     const atom = pickRandom(dataIsotop);
@@ -3051,21 +3137,11 @@ function renderBerlatihQuestion(){
     const concept = pickRandom(ALL_QUIZ_CONCEPTS.filter(k => bank[k]));
     const format = pickRandom(Object.keys(bank[concept]));
     const q = bank[concept][format]();
-    card.innerHTML = `<div class="m1-eyebrow">Soal ${berlatihIndex+1} dari ${berlatihQuestions.length}</div>
-      <div class="m1-atom-display">${invAtomCard(atom.proton, atom.neutron, atom.nama)}</div>
-      <div id="bl-quiz-body"></div>`;
-    container.appendChild(card);
+    inner.innerHTML = `<div class="m1-atom-display">${invAtomCardCustom(atom.proton, atom.neutron, '')}</div><div id="bl-quiz-body"></div>`;
     renderQuestion('bl', q, (isCorrect) => finishBerlatihQuestion(isCorrect));
   } else {
-    const { pair, match } = pickVerifyPair(spec.checkKind);
-    const [a, b] = pair;
-    const label = BERLATIH_LABEL[spec.checkKind];
-    card.innerHTML = `<div class="m1-eyebrow">Soal ${berlatihIndex+1} dari ${berlatihQuestions.length}</div>
-      <div class="m1-atom-display">${invAtomCard(a.proton, a.neutron, a.nama+' ('+a.lambang+'-'+a.nomorMassa+')')}${invAtomCard(b.proton, b.neutron, b.nama+' ('+b.lambang+'-'+b.nomorMassa+')')}</div>
-      <div id="bl-verify-body"></div>`;
-    container.appendChild(card);
-    invMiniMC(document.getElementById('bl-verify-body'), `Apakah kedua atom ini berpasangan ${label}?`, ['Ya','Tidak'], match ? 'Ya' : 'Tidak',
-      (isCorrect) => finishBerlatihQuestion(isCorrect));
+    const renderers = { verify: relasiVerifyRender(spec.checkKind), pattern: relasiPatternRender(spec.checkKind), compute: relasiComputeRender(spec.checkKind) };
+    renderers[spec.aspek](inner, (isCorrect) => finishBerlatihQuestion(isCorrect));
   }
 }
 
