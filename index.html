@@ -211,6 +211,12 @@
   .badge-stabil.hipotetis{ background:rgba(90,100,120,0.12); color:var(--ink-soft); }
 
   /* ---------- Pengingat rotasi (khusus HP mode potret) ---------- */
+  #global-user-badge{
+    position:absolute; top:8px; right:14px; z-index:60;
+    font-family:'Plus Jakarta Sans'; font-size:11px; font-weight:700; color:var(--primary-dark);
+    background:rgba(255,255,255,0.94); padding:5px 12px; border-radius:99px; box-shadow:var(--bayang-kecil);
+    pointer-events:none;
+  }
   #rotate-hint{
     position:fixed; inset:0; z-index:999; display:none; align-items:center; justify-content:center;
     flex-direction:column; gap:16px; background:#0B1729; color:#fff; text-align:center; padding:32px;
@@ -313,6 +319,7 @@
 
 <div id="viewport">
   <div id="stage">
+    <div id="global-user-badge">👤 Belum masuk</div>
 
     <!-- ===== SCREEN 1: JUDUL ===== -->
     <div class="screen active" id="screen-judul">
@@ -372,6 +379,11 @@
           <div class="menu-icon">📝</div>
           <div class="menu-label">Berlatih</div>
           <span class="menu-tag">Tahap 4</span>
+        </div>
+        <div class="menu-card" onclick="showScreen('screen-bermain-hub')">
+          <div class="menu-icon">🎮</div>
+          <div class="menu-label">Bermain</div>
+          <span class="menu-tag">Tahap 5</span>
         </div>
       </div>
       <div class="navbar">
@@ -535,6 +547,88 @@
       <div class="navbar">
         <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-berlatih-hub')">◂ Keluar</button>
         <span style="font-size:12px;color:var(--ink-soft);" id="bl-navlabel">Soal 1</span>
+      </div>
+    </div>
+
+    <!-- ===== SCREEN 2i: BERMAIN — pilih game ===== -->
+    <div class="screen" id="screen-bermain-hub">
+      <div class="topbar">
+        <div class="brand"><span class="dot"></span>Bermain</div>
+        <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-menu')">◂ Menu</button>
+      </div>
+      <div class="content" style="display:flex; align-items:center; justify-content:center; gap:20px;">
+        <div class="menu-card" onclick="startAtomBuilder()">
+          <div class="menu-icon">🧩</div>
+          <div class="menu-label">Atom<br>Builder</div>
+          <span class="menu-tag" style="background:rgba(42,174,108,0.15); color:var(--hijau);">Tersedia</span>
+        </div>
+        <div class="menu-card" style="opacity:.55; cursor:not-allowed;">
+          <div class="menu-icon">🎯</div>
+          <div class="menu-label">Tebak Isotop</div>
+          <span class="menu-tag">Segera hadir</span>
+        </div>
+        <div class="menu-card" style="opacity:.55; cursor:not-allowed;">
+          <div class="menu-icon">🃏</div>
+          <div class="menu-label">Cari Pasangan</div>
+          <span class="menu-tag">Segera hadir</span>
+        </div>
+      </div>
+      <div class="navbar">
+        <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-menu')">◂ Kembali</button>
+        <span style="font-size:12px;color:var(--ink-soft);">Susun atom sesuai notasi target dengan klik partikel</span>
+      </div>
+    </div>
+
+    <!-- ===== SCREEN 2j: ATOM BUILDER ===== -->
+    <div class="screen" id="screen-atom-builder">
+      <div class="topbar">
+        <div class="brand"><span class="dot"></span>Atom Builder</div>
+        <span class="quiz-score-badge" id="ab-score">0/0</span>
+      </div>
+      <div class="content" style="padding:12px 26px; overflow-y:auto;">
+        <div style="max-width:820px; margin:0 auto; text-align:center;">
+          <div class="m1-eyebrow" style="text-align:center;">Target</div>
+          <div id="ab-target-notasi" style="font-family:'JetBrains Mono'; font-weight:800; font-size:52px; color:var(--ink); line-height:1;"></div>
+          <div id="ab-target-nama" style="font-size:13px; color:var(--ink-soft); font-weight:600; margin-bottom:10px;"></div>
+
+          <div id="ab-visual" style="margin:6px auto;"></div>
+
+          <div style="display:flex; justify-content:center; gap:28px; margin:14px 0;">
+            <div style="text-align:center;">
+              <div style="font-family:'JetBrains Mono'; font-size:22px; font-weight:700; color:var(--accent-dark);" id="ab-count-p">0</div>
+              <div style="font-size:11px; color:var(--ink-soft); font-weight:700;">PROTON</div>
+              <div style="display:flex; gap:6px; margin-top:6px;">
+                <button class="step-btn" onclick="builderMinus('p')">–</button>
+                <button class="step-btn" onclick="builderAdd('p')">+</button>
+              </div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-family:'JetBrains Mono'; font-size:22px; font-weight:700; color:var(--neutron-c);" id="ab-count-n">0</div>
+              <div style="font-size:11px; color:var(--ink-soft); font-weight:700;">NEUTRON</div>
+              <div style="display:flex; gap:6px; margin-top:6px;">
+                <button class="step-btn" onclick="builderMinus('n')">–</button>
+                <button class="step-btn" onclick="builderAdd('n')">+</button>
+              </div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-family:'JetBrains Mono'; font-size:22px; font-weight:700; color:var(--primary);" id="ab-count-e">0</div>
+              <div style="font-size:11px; color:var(--ink-soft); font-weight:700;">ELEKTRON</div>
+              <div style="display:flex; gap:6px; margin-top:6px;">
+                <button class="step-btn" onclick="builderMinus('e')">–</button>
+                <button class="step-btn" onclick="builderAdd('e')">+</button>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" onclick="builderCheck()">Cek Susunan ▸</button>
+          <div id="ab-feedback" style="margin-top:10px; font-size:13.5px; font-weight:700;"></div>
+          <div id="ab-save-status" style="font-size:12px; color:var(--ink-soft); margin-top:14px;"></div>
+          <button class="btn btn-primary" style="background:var(--accent); box-shadow:0 6px 18px rgba(242,153,74,0.45); margin-top:8px;" onclick="saveBuilderScore()">💾 Simpan Skor</button>
+        </div>
+      </div>
+      <div class="navbar">
+        <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-bermain-hub')">◂ Keluar</button>
+        <span style="font-size:12px;color:var(--ink-soft);">Klik +/− sampai jumlah partikel sesuai target, lalu Cek</span>
       </div>
     </div>
 
@@ -748,6 +842,10 @@ function onKelasChange(){
   namaSelect.disabled = false;
 }
 
+function updateGlobalBadge(){
+  const el = document.getElementById('global-user-badge');
+  if(el) el.textContent = currentUser ? `👤 ${currentUser.nama} · ${currentUser.kelas}` : '👤 Tamu';
+}
 function doLogin(){
   const kelas = document.getElementById('login-kelas').value;
   const nama = document.getElementById('login-nama').value;
@@ -760,12 +858,14 @@ function doLogin(){
   errBox.classList.remove('show');
   currentUser = { kelas, nama };
   document.getElementById('menu-user-badge').textContent = `${nama} • ${kelas}`;
+  updateGlobalBadge();
   showScreen('screen-menu');
 }
 
 function doGuestLogin(){
   currentUser = null;
   document.getElementById('menu-user-badge').textContent = 'Tamu';
+  updateGlobalBadge();
   showScreen('screen-menu');
 }
 loadDaftarSiswa();
@@ -2436,6 +2536,9 @@ function createInvestigationEngine(cfg){
     const container = document.getElementById(idOf('step-container'));
     if(state.completed[state.index] && htmlCache[state.index] !== undefined){
       container.innerHTML = htmlCache[state.index]; // pulihkan, jangan render ulang dari nol
+      container.querySelectorAll('button').forEach(btn => {
+        if(btn.textContent.includes('Lanjut')) btn.onclick = () => eng.next();
+      });
     } else {
       container.innerHTML = '';
       renderInvestigationStep(container, cfg.steps[state.index], eng);
@@ -2443,7 +2546,10 @@ function createInvestigationEngine(cfg){
   }
   function goto(i){
     const container = document.getElementById(idOf('step-container'));
-    if(container && state.completed[state.index]) htmlCache[state.index] = container.innerHTML;
+    if(container && state.completed[state.index]){
+      container.querySelectorAll('input').forEach(inp => inp.setAttribute('value', inp.value));
+      htmlCache[state.index] = container.innerHTML;
+    }
     state.index = Math.max(0, Math.min(cfg.steps.length-1, i));
     renderStep();
   }
@@ -3185,6 +3291,97 @@ async function saveBerlatihScore(){
   } catch(err){
     statusEl.textContent = '⚠ Gagal menyimpan: ' + err.message;
     btn.disabled = false;
+  }
+}
+/* ================================================================
+   BERMAIN — Atom Builder (Game #1)
+   ================================================================ */
+let builderTarget = null, builderStartTime = null;
+let builderCounts = { p:0, n:0, e:0 };
+const builderScore = { total:0, benar:0 };
+
+function startAtomBuilder(){
+  builderScore.total = 0; builderScore.benar = 0;
+  builderStartTime = performance.now();
+  showScreen('screen-atom-builder');
+  nextBuilderTarget();
+}
+function nextBuilderTarget(){
+  builderTarget = pickRandom(dataIsotop);
+  builderCounts = { p:0, n:0, e:0 };
+  renderBuilder();
+}
+function renderBuilderAtomHtml(p, n, e){
+  const size = 240, cx = size/2, cy = size/2;
+  const total = p + n;
+  const nucR = total > 0 ? 16 + Math.min(28, Math.sqrt(total)*5.5) : 16;
+  let html = `<div style="position:relative;width:${size}px;height:${size}px;margin:0 auto;">`;
+  html += `<div style="position:absolute;left:${cx-nucR}px;top:${cy-nucR}px;width:${nucR*2}px;height:${nucR*2}px;border-radius:50%;background:radial-gradient(circle at 40% 32%, rgba(255,255,255,0.5), transparent 60%);box-shadow:0 0 26px rgba(242,153,74,0.3);"></div>`;
+  const types = []; for(let i=0;i<p;i++) types.push('proton'); for(let i=0;i<n;i++) types.push('neutron');
+  types.forEach((t,i) => {
+    const golden = 2.399963; const r = nucR*0.8*Math.sqrt((i+0.5)/Math.max(1,types.length)); const theta = i*golden;
+    const px = cx + r*Math.cos(theta), py = cy + r*Math.sin(theta);
+    const col = t==='proton' ? 'background:radial-gradient(circle at 35% 30%, #FFE3C2, #F2994A 55%, #D9791F);' : 'background:radial-gradient(circle at 35% 30%, #EDEFF6, #8A97B3 60%, #5C6785);';
+    html += `<div style="position:absolute;left:${px-6}px;top:${py-6}px;width:12px;height:12px;border-radius:50%;${col}"></div>`;
+  });
+  const shells = distributeElectrons(e);
+  shells.forEach((count, si) => {
+    const radius = nucR + 26 + si*32;
+    html += `<div style="position:absolute;left:${cx-radius}px;top:${cy-radius}px;width:${radius*2}px;height:${radius*2}px;border-radius:50%;border:1.5px solid rgba(27,111,168,0.18);">`;
+    for(let i=0;i<count;i++){
+      const angle = (360/count)*i;
+      html += `<div style="position:absolute;top:50%;left:50%;width:10px;height:10px;margin:-5px;border-radius:50%;background:radial-gradient(circle at 35% 30%, #EAFBFF, #4CC9F0 55%, #1B6FA8);transform:rotate(${angle}deg) translate(${radius}px) rotate(-${angle}deg);"></div>`;
+    }
+    html += `</div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+function renderBuilder(){
+  document.getElementById('ab-score').textContent = `${builderScore.benar}/${builderScore.total}`;
+  document.getElementById('ab-target-notasi').innerHTML =
+    `<sup style="font-size:24px;">${toSup(builderTarget.nomorMassa)}</sup><sub style="font-size:24px;">${toSub(builderTarget.proton)}</sub>${builderTarget.lambang}`;
+  document.getElementById('ab-target-nama').textContent = builderTarget.nama + ' — atom netral';
+  document.getElementById('ab-count-p').textContent = builderCounts.p;
+  document.getElementById('ab-count-n').textContent = builderCounts.n;
+  document.getElementById('ab-count-e').textContent = builderCounts.e;
+  document.getElementById('ab-visual').innerHTML = renderBuilderAtomHtml(builderCounts.p, builderCounts.n, builderCounts.e);
+  document.getElementById('ab-feedback').textContent = '';
+}
+function builderAdd(part){ builderCounts[part]++; renderBuilder(); }
+function builderMinus(part){ builderCounts[part] = Math.max(0, builderCounts[part]-1); renderBuilder(); }
+function builderCheck(){
+  builderScore.total++;
+  const ok = builderCounts.p === builderTarget.proton && builderCounts.n === builderTarget.neutron && builderCounts.e === builderTarget.proton;
+  const fb = document.getElementById('ab-feedback');
+  document.getElementById('ab-score').textContent = `${builderScore.benar + (ok?1:0)}/${builderScore.total}`;
+  if(ok){
+    builderScore.benar++;
+    fb.style.color = 'var(--hijau)'; fb.textContent = '✓ Tepat! Atom berikutnya…';
+    setTimeout(nextBuilderTarget, 900);
+  } else {
+    fb.style.color = 'var(--merah)';
+    const salah = [];
+    if(builderCounts.p !== builderTarget.proton) salah.push('proton');
+    if(builderCounts.n !== builderTarget.neutron) salah.push('neutron');
+    if(builderCounts.e !== builderTarget.proton) salah.push('elektron');
+    fb.textContent = '✗ Belum tepat — cek lagi: ' + salah.join(', ');
+  }
+}
+async function saveBuilderScore(){
+  const statusEl = document.getElementById('ab-save-status');
+  if(!currentUser){ statusEl.textContent = 'Masuk sebagai tamu — skor tidak disimpan ke server.'; return; }
+  if(builderScore.total === 0){ statusEl.textContent = 'Selesaikan minimal 1 atom dulu.'; return; }
+  const waktu = Math.max(1, Math.round((performance.now() - builderStartTime) / 1000));
+  statusEl.textContent = 'Menyimpan…';
+  try{
+    await apiPost('saveLatihanIndividu', {
+      kelas: currentUser.kelas, nama: currentUser.nama, materi: 'bermain-atom-builder',
+      totalSoal: builderScore.total, totalBenar: builderScore.benar, waktu
+    });
+    statusEl.textContent = '✓ Tersimpan ke Google Sheet.';
+  } catch(err){
+    statusEl.textContent = '⚠ Gagal menyimpan: ' + err.message;
   }
 }
 </script>
