@@ -635,7 +635,8 @@
             </div>
           </div>
 
-          <button class="btn btn-primary" onclick="builderCheck()">Cek Susunan ▸</button>
+          <button class="btn btn-primary" id="ab-check-btn" onclick="builderCheck()">Cek Susunan ▸</button>
+          <div id="ab-next-area"></div>
           <div id="ab-feedback" style="margin-top:10px; font-size:13.5px; font-weight:700;"></div>
           <div id="ab-save-status" style="font-size:12px; color:var(--ink-soft); margin-top:14px;"></div>
           <button class="btn btn-primary" style="background:var(--accent); box-shadow:0 6px 18px rgba(242,153,74,0.45); margin-top:8px;" onclick="saveBuilderScore()">💾 Simpan Skor</button>
@@ -977,6 +978,8 @@ resizeStage();
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  const badge = document.getElementById('global-user-badge');
+  if(badge) badge.style.display = (id === 'screen-atom-builder') ? 'none' : 'block';
 }
 
 /* ============ 3. KNOWLEDGE BASE (skema G.4) ============ */
@@ -3387,6 +3390,7 @@ let builderTarget = null, builderStartTime = null;
 let builderCounts = { p:0, n:0, e:0 };
 const builderScore = { total:0, benar:0 };
 let builderMode = 'individu'; // 'individu' | 2 | 3 | 4
+let builderRoundLimit = 5;
 let builderTeam = null; // { namaTim, anggota:[{kelas,nama,soalDijawab,benar}], currentIndex }
 
 /* ---------- Layar setup mode ---------- */
@@ -3414,7 +3418,13 @@ function setupAtomBuilderModeButtons(){
 function renderMemberFields(n){
   const host = document.getElementById('ab-member-fields');
   host.innerHTML = '';
-  for(let i=0;i<n;i++){
+  const startIdx = currentUser ? 1 : 0;
+  if(currentUser){
+    const div0 = document.createElement('div'); div0.className = 'field'; div0.style.marginTop = '8px';
+    div0.innerHTML = `<label>Anggota 1 (kamu)</label><input type="text" value="${currentUser.nama} (${currentUser.kelas})" disabled style="background:var(--cream); color:var(--ink-soft);">`;
+    host.appendChild(div0);
+  }
+  for(let i=startIdx;i<n;i++){
     const div = document.createElement('div'); div.className = 'field'; div.style.marginTop = '8px';
     div.innerHTML = `<label>Anggota ${i+1}</label>
       <select id="ab-member-${i}"><option value="">— pilih siswa —</option>
@@ -3435,7 +3445,12 @@ function confirmAtomBuilderStart(){
   if(!namaTim){ errEl.textContent = 'Nama tim wajib diisi.'; errEl.classList.add('show'); return; }
   const anggota = [];
   const seen = new Set();
-  for(let i=0;i<n;i++){
+  if(currentUser){
+    anggota.push({ kelas: currentUser.kelas, nama: currentUser.nama, soalDijawab:0, benar:0 });
+    seen.add(currentUser.kelas+'||'+currentUser.nama);
+  }
+  const startIdx = currentUser ? 1 : 0;
+  for(let i=startIdx;i<n;i++){
     const val = document.getElementById('ab-member-'+i).value;
     if(!val){ errEl.textContent = 'Semua anggota tim harus dipilih.'; errEl.classList.add('show'); return; }
     if(seen.has(val)){ errEl.textContent = 'Setiap anggota harus berbeda orang.'; errEl.classList.add('show'); return; }
@@ -3443,6 +3458,7 @@ function confirmAtomBuilderStart(){
     const [kelas, nama] = val.split('||');
     anggota.push({ kelas, nama, soalDijawab:0, benar:0 });
   }
+  if(!currentUser && anggota.length < n){ errEl.textContent = 'Semua anggota tim harus dipilih.'; errEl.classList.add('show'); return; }
   startAtomBuilder({ namaTim, anggota, currentIndex: 0 });
 }
 
@@ -3450,6 +3466,7 @@ function confirmAtomBuilderStart(){
 function startAtomBuilder(teamConfig){
   builderTeam = teamConfig;
   builderScore.total = 0; builderScore.benar = 0;
+  builderRoundLimit = Number(appSettings.kuis_jumlah_soal) || 5;
   builderStartTime = performance.now();
   document.getElementById('ab-turn-badge').style.display = builderTeam ? 'inline-flex' : 'none';
   document.getElementById('ab-team-list').style.display = builderTeam ? 'flex' : 'none';
@@ -3459,6 +3476,9 @@ function startAtomBuilder(teamConfig){
 function nextBuilderTarget(){
   builderTarget = pickRandom(dataIsotop);
   builderCounts = { p:0, n:0, e:0 };
+  document.getElementById('ab-next-area').innerHTML = '';
+  document.getElementById('ab-check-btn').style.display = 'inline-flex';
+  document.querySelectorAll('#screen-atom-builder .step-btn').forEach(b => b.disabled = false);
   renderBuilder();
 }
 function renderBuilderAtomHtml(p, n, e){
@@ -3503,7 +3523,7 @@ function renderTeamUI(){
     </span>`).join('');
 }
 function renderBuilder(){
-  document.getElementById('ab-score').textContent = `${builderScore.benar}/${builderScore.total}`;
+  document.getElementById('ab-score').textContent = `${builderScore.benar}/${builderScore.total} (dari ${builderRoundLimit})`;
   document.getElementById('ab-target-notasi').innerHTML =
     `<sup style="font-size:24px;">${toSup(builderTarget.nomorMassa)}</sup><sub style="font-size:24px;">${toSub(builderTarget.proton)}</sub>${builderTarget.lambang}`;
   document.getElementById('ab-target-nama').textContent = builderTarget.nama + ' — atom netral';
@@ -3512,6 +3532,7 @@ function renderBuilder(){
   document.getElementById('ab-count-e').textContent = builderCounts.e;
   document.getElementById('ab-visual').innerHTML = renderBuilderAtomHtml(builderCounts.p, builderCounts.n, builderCounts.e);
   document.getElementById('ab-feedback').textContent = '';
+  document.getElementById('ab-save-btn').disabled = (builderScore.total === 0);
   renderTeamUI();
 }
 function builderAdd(part){ builderCounts[part]++; renderBuilder(); }
@@ -3519,54 +3540,70 @@ function builderMinus(part){ builderCounts[part] = Math.max(0, builderCounts[par
 function builderCheck(){
   builderScore.total++;
   const ok = builderCounts.p === builderTarget.proton && builderCounts.n === builderTarget.neutron && builderCounts.e === builderTarget.proton;
-  const fb = document.getElementById('ab-feedback');
   if(ok) builderScore.benar++;
-  document.getElementById('ab-score').textContent = `${builderScore.benar}/${builderScore.total}`;
+  document.getElementById('ab-score').textContent = `${builderScore.benar}/${builderScore.total} (dari ${builderRoundLimit})`;
+  document.getElementById('ab-save-btn').disabled = false;
 
   if(builderTeam){
     const cur = builderTeam.anggota[builderTeam.currentIndex];
     cur.soalDijawab++; if(ok) cur.benar++;
     builderTeam.currentIndex = (builderTeam.currentIndex + 1) % builderTeam.anggota.length;
+    renderTeamUI();
   }
 
+  // Tidak lagi "paksa benar" — kontrol dikunci setelah dicek, lalu selalu bisa lanjut ke atom berikutnya
+  document.querySelectorAll('#screen-atom-builder .step-btn').forEach(b => b.disabled = true);
+  document.getElementById('ab-check-btn').style.display = 'none';
+
+  const fb = document.getElementById('ab-feedback');
   if(ok){
-    fb.style.color = 'var(--hijau)'; fb.textContent = '✓ Tepat! Atom berikutnya…';
-    setTimeout(nextBuilderTarget, 900);
+    fb.style.color = 'var(--hijau)'; fb.textContent = '✓ Tepat!';
   } else {
     fb.style.color = 'var(--merah)';
-    const salah = [];
-    if(builderCounts.p !== builderTarget.proton) salah.push('proton');
-    if(builderCounts.n !== builderTarget.neutron) salah.push('neutron');
-    if(builderCounts.e !== builderTarget.proton) salah.push('elektron');
-    fb.textContent = '✗ Belum tepat — cek lagi: ' + salah.join(', ');
-    renderTeamUI();
+    fb.textContent = `✗ Belum tepat — jawaban benar: proton=${builderTarget.proton}, neutron=${builderTarget.neutron}, elektron=${builderTarget.proton}`;
+  }
+
+  const nextArea = document.getElementById('ab-next-area');
+  if(builderScore.total >= builderRoundLimit){
+    nextArea.innerHTML = `<div style="margin-top:12px; font-weight:700; color:var(--primary-dark); font-size:13.5px;">🎉 Ronde selesai (${builderRoundLimit} soal)! Simpan skor di bawah untuk mulai ronde baru.</div>`;
+  } else {
+    nextArea.innerHTML = `<button class="btn btn-primary" style="margin-top:12px;" onclick="nextBuilderTarget()">Atom Berikutnya ▸</button>`;
   }
 }
 async function saveBuilderScore(){
   const statusEl = document.getElementById('ab-save-status');
+  const btn = document.getElementById('ab-save-btn');
   if(builderScore.total === 0){ statusEl.textContent = 'Selesaikan minimal 1 atom dulu.'; return; }
   const waktu = Math.max(1, Math.round((performance.now() - builderStartTime) / 1000));
   statusEl.textContent = 'Menyimpan…';
+  btn.disabled = true;
   try{
     if(builderTeam){
+      const anggotaValid = builderTeam.anggota.filter(a => a.soalDijawab > 0); // cegah kirim anggota yang belum dapat giliran (hindari galat bagi-nol)
       await apiPost('saveSesiTim', {
         namaTim: builderTeam.namaTim,
         kelas: builderTeam.anggota[0].kelas,
         materi: 'bermain-atom-builder',
         totalWaktuTim: waktu,
-        anggota: builderTeam.anggota,
+        anggota: anggotaValid,
       });
-      statusEl.textContent = `✓ Skor tim "${builderTeam.namaTim}" tersimpan ke Google Sheet.`;
+      statusEl.textContent = `✓ Skor tim "${builderTeam.namaTim}" tersimpan.`;
+      builderTeam.anggota.forEach(a => { a.soalDijawab = 0; a.benar = 0; });
     } else {
-      if(!currentUser){ statusEl.textContent = 'Masuk sebagai tamu — skor tidak disimpan ke server.'; return; }
+      if(!currentUser){ statusEl.textContent = 'Masuk sebagai tamu — skor tidak disimpan ke server.'; btn.disabled = false; return; }
       await apiPost('saveLatihanIndividu', {
         kelas: currentUser.kelas, nama: currentUser.nama, materi: 'bermain-atom-builder',
         totalSoal: builderScore.total, totalBenar: builderScore.benar, waktu
       });
       statusEl.textContent = '✓ Tersimpan ke Google Sheet.';
     }
+    // PENTING: reset counter setelah tersimpan supaya simpan berikutnya tidak mengirim ulang data yang sama
+    builderScore.total = 0; builderScore.benar = 0;
+    builderStartTime = performance.now();
+    setTimeout(() => { nextBuilderTarget(); }, 700);
   } catch(err){
     statusEl.textContent = '⚠ Gagal menyimpan: ' + err.message;
+    btn.disabled = false;
   }
 }
 setupAtomBuilderModeButtons();
