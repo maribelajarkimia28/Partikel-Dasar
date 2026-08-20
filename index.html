@@ -639,7 +639,8 @@
           <div id="ab-next-area"></div>
           <div id="ab-feedback" style="margin-top:10px; font-size:13.5px; font-weight:700;"></div>
           <div id="ab-save-status" style="font-size:12px; color:var(--ink-soft); margin-top:14px;"></div>
-          <button class="btn btn-primary" style="background:var(--accent); box-shadow:0 6px 18px rgba(242,153,74,0.45); margin-top:8px;" onclick="saveBuilderScore()">💾 Simpan Skor</button>
+          <button class="btn btn-primary" id="ab-save-btn" style="background:var(--accent); box-shadow:0 6px 18px rgba(242,153,74,0.45); margin-top:8px;" onclick="saveBuilderScore(false)">💾 Simpan &amp; Selesai Sekarang</button>
+          <div style="font-size:11px; color:var(--ink-soft); margin-top:6px;">Skor ronde ini otomatis tersimpan begitu selesai — tombol ini hanya untuk berhenti lebih awal.</div>
         </div>
       </div>
       <div class="navbar">
@@ -888,11 +889,19 @@ async function apiGet(action, params){
   const qs = new URLSearchParams({ action, ...(params||{}) });
   return apiFetchWithRetry(`${API_URL}?${qs}`, {});
 }
+// ID unik per aksi simpan — dikirim sekali dan dipakai ulang di setiap percobaan retry
+// yang sama, supaya backend bisa mendeteksi & mengabaikan eksekusi ganda akibat retry
+// (mis. permintaan sebenarnya sudah berhasil di server tapi balasannya gagal sampai ke klien).
+function genOpId_(){
+  if (window.crypto && typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+  return 'op-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+}
 async function apiPost(action, payload){
+  const clientOpId = genOpId_();
   return apiFetchWithRetry(API_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // hindari CORS preflight
-    body: JSON.stringify({ action, payload })
+    body: JSON.stringify({ action, payload, clientOpId })
   });
 }
 
@@ -3565,18 +3574,24 @@ function builderCheck(){
 
   const nextArea = document.getElementById('ab-next-area');
   if(builderScore.total >= builderRoundLimit){
-    nextArea.innerHTML = `<div style="margin-top:12px; font-weight:700; color:var(--primary-dark); font-size:13.5px;">🎉 Ronde selesai (${builderRoundLimit} soal)! Simpan skor di bawah untuk mulai ronde baru.</div>`;
+    nextArea.innerHTML = `<div style="margin-top:12px; font-weight:700; color:var(--primary-dark); font-size:13.5px;">🎉 Ronde selesai (${builderRoundLimit} soal)! Menyimpan skor otomatis…</div>`;
+    // Ronde selesai -> simpan otomatis, TIDAK perlu siswa menekan tombol apa pun.
+    saveBuilderScore(true);
   } else {
     nextArea.innerHTML = `<button class="btn btn-primary" style="margin-top:12px;" onclick="nextBuilderTarget()">Atom Berikutnya ▸</button>`;
   }
 }
-async function saveBuilderScore(){
+let builderSaving = false; // guard tambahan: cegah 2 proses simpan berjalan bersamaan (auto + manual)
+async function saveBuilderScore(auto){
   const statusEl = document.getElementById('ab-save-status');
   const btn = document.getElementById('ab-save-btn');
+  if(builderSaving) return; // sudah ada proses simpan berjalan, abaikan panggilan kedua
   if(builderScore.total === 0){ statusEl.textContent = 'Selesaikan minimal 1 atom dulu.'; return; }
+  builderSaving = true;
+  btn.disabled = true; // dikunci selama proses; TIDAK di-enable lagi otomatis setelah sukses (hanya saat error, lihat catch)
   const waktu = Math.max(1, Math.round((performance.now() - builderStartTime) / 1000));
-  statusEl.textContent = 'Menyimpan…';
-  btn.disabled = true;
+  const totalSoalSesi = builderScore.total, totalBenarSesi = builderScore.benar; // simpan nilai sebelum direset
+  statusEl.textContent = auto ? 'Menyimpan skor ronde secara otomatis…' : 'Menyimpan…';
   try{
     if(builderTeam){
       const anggotaValid = builderTeam.anggota.filter(a => a.soalDijawab > 0); // cegah kirim anggota yang belum dapat giliran (hindari galat bagi-nol)
@@ -3587,23 +3602,32 @@ async function saveBuilderScore(){
         totalWaktuTim: waktu,
         anggota: anggotaValid,
       });
-      statusEl.textContent = `✓ Skor tim "${builderTeam.namaTim}" tersimpan.`;
+      statusEl.textContent = auto
+        ? `✓ Skor tim "${builderTeam.namaTim}" tersimpan otomatis (${totalBenarSesi}/${totalSoalSesi} benar).`
+        : `✓ Skor tim "${builderTeam.namaTim}" tersimpan (${totalBenarSesi}/${totalSoalSesi} benar).`;
       builderTeam.anggota.forEach(a => { a.soalDijawab = 0; a.benar = 0; });
     } else {
-      if(!currentUser){ statusEl.textContent = 'Masuk sebagai tamu — skor tidak disimpan ke server.'; btn.disabled = false; return; }
+      if(!currentUser){
+        statusEl.textContent = 'Masuk sebagai tamu — skor tidak disimpan ke server.';
+        builderSaving = false; btn.disabled = false; return;
+      }
       await apiPost('saveLatihanIndividu', {
         kelas: currentUser.kelas, nama: currentUser.nama, materi: 'bermain-atom-builder',
-        totalSoal: builderScore.total, totalBenar: builderScore.benar, waktu
+        totalSoal: totalSoalSesi, totalBenar: totalBenarSesi, waktu
       });
-      statusEl.textContent = '✓ Tersimpan ke Google Sheet.';
+      statusEl.textContent = auto
+        ? `✓ Skor ronde tersimpan otomatis (${totalBenarSesi}/${totalSoalSesi} benar).`
+        : `✓ Tersimpan ke Google Sheet (${totalBenarSesi}/${totalSoalSesi} benar).`;
     }
-    // PENTING: reset counter setelah tersimpan supaya simpan berikutnya tidak mengirim ulang data yang sama
+    // PENTING: reset counter setelah tersimpan supaya simpan berikutnya (atau klik ganda) tidak mengirim ulang data yang sama
     builderScore.total = 0; builderScore.benar = 0;
     builderStartTime = performance.now();
-    setTimeout(() => { nextBuilderTarget(); }, 700);
+    builderSaving = false;
+    setTimeout(() => { nextBuilderTarget(); }, 900);
   } catch(err){
-    statusEl.textContent = '⚠ Gagal menyimpan: ' + err.message;
-    btn.disabled = false;
+    statusEl.textContent = '⚠ Gagal menyimpan otomatis: ' + err.message + ' — coba tekan tombol "Simpan & Selesai Sekarang".';
+    builderSaving = false;
+    btn.disabled = false; // hanya di-re-enable saat GAGAL, supaya siswa bisa coba simpan manual
   }
 }
 setupAtomBuilderModeButtons();
